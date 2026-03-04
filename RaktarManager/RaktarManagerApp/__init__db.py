@@ -49,7 +49,7 @@ try:
     if not User.query.filter_by(email="peldapeter@gmail.com").first():
         user = User(username="Peter", 
                     email="peldapeter@gmail.com",
-                    full_name="Példa Péter",
+                    full_name="PÃ©lda PÃ©ter",
                     phone="+36301234567")
 
         user.setpassword("Jelszo123")
@@ -67,44 +67,44 @@ try:
     db.session.commit()
 
     # Product
-    if not Product.query.filter_by(name="Vezeték nélküli fülhallgató").first():
+    if not Product.query.filter_by(name="VezetÃ©k nÃ©lkÃ¼li fÃ¼lhallgatÃ³").first():
         product = Product(
             category_id="3",
-            name="Vezeték nélküli fülhallgató",
-            description="Zajszûrõs Bluetooth fülhallgató 20 órás üzemidõvel.",
+            name="VezetÃ©k nÃ©lkÃ¼li fÃ¼lhallgatÃ³",
+            description="ZajszÃ»rÃµs Bluetooth fÃ¼lhallgatÃ³ 20 Ã³rÃ¡s Ã¼zemidÃµvel.",
             sku="ELEC-WF-001",
             price=25000.00,
             is_active=True,
             created_at=datetime(2026, 3, 1, 10, 15)
         )
         db.session.add(product)
-    if not Product.query.filter_by(name="A tiszta kód").first():
+    if not Product.query.filter_by(name="A tiszta kÃ³d").first():
         product2 = Product(
             category_id="2",
-            name="A tiszta kód",
-            description="Útmutató agilis szoftverfejlesztõknek.",
+            name="A tiszta kÃ³d",
+            description="ÃštmutatÃ³ agilis szoftverfejlesztÃµknek.",
             sku="BOOK-CLN-002",
             price=8500.00,
             is_active=True,
             created_at=datetime(2026, 3, 2, 14, 30)
         )
         db.session.add(product2)
-    if not Product.query.filter_by(name="ZEszpresszó Kávéfõzõ").first():
+    if not Product.query.filter_by(name="ZEszpresszÃ³ KÃ¡vÃ©fÃµzÃµ").first():
         product3 = Product(
             category_id="1",
-            name="Eszpresszó Kávéfõzõ",
-            description="Prémium kávéfõzõ beépített tejhabosítóval.",
+            name="EszpresszÃ³ KÃ¡vÃ©fÃµzÃµ",
+            description="PrÃ©mium kÃ¡vÃ©fÃµzÃµ beÃ©pÃ­tett tejhabosÃ­tÃ³val.",
             sku="KITC-COF-003",
             price=45000.00,
             is_active=False,
             created_at=datetime(2026, 3, 3, 9)
         )
         db.session.add(product3)
-    if not Product.query.filter_by(name="Vízálló Okosóra").first():
+    if not Product.query.filter_by(name="VÃ­zÃ¡llÃ³ OkosÃ³ra").first():
         product4 = Product(
             category_id="3",
-            name="Vízálló Okosóra",
-            description="Okosóra pulzusmérõvel, lépésszámlálóval és GPS-szel.",
+            name="VÃ­zÃ¡llÃ³ OkosÃ³ra",
+            description="OkosÃ³ra pulzusmÃ©rÃµvel, lÃ©pÃ©sszÃ¡mlÃ¡lÃ³val Ã©s GPS-szel.",
             sku="ELEC-SMW-004",
             price=55000.00,
             is_active=True,
@@ -115,18 +115,18 @@ try:
         product5 = Product(
             category_id="2",
             name="Python Mesterkurzus",
-            description="Haladó programozási technikák és webfejlesztés.",
+            description="HaladÃ³ programozÃ¡si technikÃ¡k Ã©s webfejlesztÃ©s.",
             sku="BOOK-PYT-005",
             price=12000.00,
             is_active=True,
             created_at=datetime(2026, 2, 28, 16, 20)
         )
         db.session.add(product5)
-    if not Product.query.filter_by(name="Kétrekeszes Kenyérpirító").first():
+    if not Product.query.filter_by(name="KÃ©trekeszes KenyÃ©rpirÃ­tÃ³").first():
         product6 = Product(
             category_id="1",
-            name="Kétrekeszes Kenyérpirító",
-            description="Acél bevonatú pirító 6 különbözõ fokozattal.",
+            name="KÃ©trekeszes KenyÃ©rpirÃ­tÃ³",
+            description="AcÃ©l bevonatÃº pirÃ­tÃ³ 6 kÃ¼lÃ¶nbÃ¶zÃµ fokozattal.",
             sku="KITC-TOA-006",
             price=14500.00,
             is_active=True,
@@ -141,25 +141,25 @@ try:
         
         address = Address(
             user_id=user.id,
-            country="Magyarország",
+            country="MagyarorszÃ¡g",
             city="Budapest",
-            street="Kossuth Lajos tér 1-3.",
+            street="Kossuth Lajos tÃ©r 1-3.",
             postal_code="1055"
         )
         db.session.add(address)
         address1 = Address(
             user_id=user.id,
-            country="Magyarország",
-            city="Veszprém",
+            country="MagyarorszÃ¡g",
+            city="VeszprÃ©m",
             street="Egyetem utca 10.",
             postal_code="8200"
         )
         db.session.add(address1)
         address2 = Address(
             user_id=user.id,
-            country="Magyarország",
+            country="MagyarorszÃ¡g",
             city="Szeged",
-            street="Kárász utca 5.",
+            street="KÃ¡rÃ¡sz utca 5.",
             postal_code="6720"
         )
         db.session.add(address2)
@@ -169,7 +169,7 @@ try:
     if not Category.query.filter_by(catname="Elektronika").first():
         db.session.add_all([
             Category(catname="Konyhai", id=1),
-            Category(catname="Könyv", id=2),
+            Category(catname="KÃ¶nyv", id=2),
             Category(catname="Elektronika", id=3)
         ])
         db.session.commit()
@@ -194,7 +194,7 @@ try:
     if not StorageLocation.query.filter_by(code="A-01").first():
         loc1 = StorageLocation(
             code="A-01",
-            description="A sor, 1. polc (Elektronika fõraktár)",
+            description="A sor, 1. polc (Elektronika fÃµraktÃ¡r)",
             is_active=1
         )
         db.session.add(loc1)
@@ -208,28 +208,28 @@ try:
     if not StorageLocation.query.filter_by(code="B-01").first():
         loc3 = StorageLocation(
             code="B-01",
-            description="B sor, 1. polc (Könyvek és kiadványok)",
+            description="B sor, 1. polc (KÃ¶nyvek Ã©s kiadvÃ¡nyok)",
             is_active=1
         )
         db.session.add(loc3)
     if not StorageLocation.query.filter_by(code="C-01").first():
         loc4 = StorageLocation(
             code="C-01",
-            description="C sor, 1. polc (Konyhafelszerelés)",
+            description="C sor, 1. polc (KonyhafelszerelÃ©s)",
             is_active=1
         )
         db.session.add(loc4)
     if not StorageLocation.query.filter_by(code="C-02").first():
         loc5 = StorageLocation(
             code="C-02",
-            description="C sor, 2. polc (Törékeny konyhai áru)",
+            description="C sor, 2. polc (TÃ¶rÃ©keny konyhai Ã¡ru)",
             is_active=1
         )
         db.session.add(loc5)
     if not StorageLocation.query.filter_by(code="B-02").first():
         loc6 = StorageLocation(
             code="B-02",
-            description="B sor, 2. polc (Oktatóanyagok és füzetek)",
+            description="B sor, 2. polc (OktatÃ³anyagok Ã©s fÃ¼zetek)",
             is_active=1
         )
         db.session.add(loc6)
@@ -240,8 +240,8 @@ try:
     order = Order.query.filter_by(order_number="ORD-2026-001").first()
  
     if order:
-        product1 = Product.query.filter_by(name="Vezeték nélküli fülhallgató").first()
-        product2 = Product.query.filter_by(name="A tiszta kód").first()
+        product1 = Product.query.filter_by(name="VezetÃ©k nÃ©lkÃ¼li fÃ¼lhallgatÃ³").first()
+        product2 = Product.query.filter_by(name="A tiszta kÃ³d").first()
     
         if product1 and product2 and not OrderItem.query.filter_by(order_id=order.id).first():
          
@@ -281,27 +281,27 @@ try:
                 change_type="BE",
                 quantity_change=50,
                 performed_by=1,   
-                note="Kezdeti raktárkészlet feltöltés (Fülhallgató)"),
+                note="Kezdeti raktÃ¡rkÃ©szlet feltÃ¶ltÃ©s (FÃ¼lhallgatÃ³)"),
          
              InventoryLog( inventory_id=2,
                  change_type="BE",
                  quantity_change=20,
                  performed_by=1,
-                 note="Kezdeti raktárkészlet feltöltés (A tiszta kód)"),
+                 note="Kezdeti raktÃ¡rkÃ©szlet feltÃ¶ltÃ©s (A tiszta kÃ³d)"),
 
              InventoryLog( inventory_id=1,
                  order_id=1,     
                  change_type="KI",
                  quantity_change=-2,
                  performed_by=1,
-                 note="Kiszolgálva az ORD-2026-001 rendeléshez"),
+                 note="KiszolgÃ¡lva az ORD-2026-001 rendelÃ©shez"),
         
              InventoryLog( inventory_id=2,
                  order_id=1,       
                  change_type="KI",
                  quantity_change=-1,
                  performed_by=1,
-                 note="Kiszolgálva az ORD-2026-001 rendeléshez")
+                 note="KiszolgÃ¡lva az ORD-2026-001 rendelÃ©shez")
         ])
     db.session.commit()
 
@@ -310,21 +310,21 @@ try:
          db.session.add_all([
              Complaint( order_id=1,
                  user_id=1,
-                 description="Tisztelt Ügyfélszolgálat! A tegnap átvett csomagban a vezeték nélküli fülhallgató dobozából hiányzott az USB-C töltõkábel. Kérem a pótlását.",
+                 description="Tisztelt ÃœgyfÃ©lszolgÃ¡lat! A tegnap Ã¡tvett csomagban a vezetÃ©k nÃ©lkÃ¼li fÃ¼lhallgatÃ³ dobozÃ¡bÃ³l hiÃ¡nyzott az USB-C tÃ¶ltÃµkÃ¡bel. KÃ©rem a pÃ³tlÃ¡sÃ¡t.",
                  file_name="hianyzo_kabel_doboz.jpg",
                  status="nyitott"),
          
              Complaint( order_id=1,
                  user_id=1,
-                 description="A 'tiszta kód' címû könyv borítója csúnyán meg volt gyûrõdve, amikor kivettem a dobozból. Valószínûleg a szállításnál sérült meg.",
+                 description="A 'tiszta kÃ³d' cÃ­mÃ» kÃ¶nyv borÃ­tÃ³ja csÃºnyÃ¡n meg volt gyÃ»rÃµdve, amikor kivettem a dobozbÃ³l. ValÃ³szÃ­nÃ»leg a szÃ¡llÃ­tÃ¡snÃ¡l sÃ©rÃ¼lt meg.",
                  file_name=None,
-                 status="lezárva",
-                 resolution="Elnézést kértünk a vásárlótól, és jóváírtunk egy 20%-os kedvezménykupont a következõ vásárlásához.",
+                 status="lezÃ¡rva",
+                 resolution="ElnÃ©zÃ©st kÃ©rtÃ¼nk a vÃ¡sÃ¡rlÃ³tÃ³l, Ã©s jÃ³vÃ¡Ã­rtunk egy 20%-os kedvezmÃ©nykupont a kÃ¶vetkezÃµ vÃ¡sÃ¡rlÃ¡sÃ¡hoz.",
                  resolved_at=datetime(2026, 3, 5, 14, 30))
          ])
     db.session.commit()
 
 except Exception as e:
     db.session.rollback()
-    print(f"Hibába ütközött: {e}")
+    print(f"HibÃ¡ba Ã¼tkÃ¶zÃ¶tt: {e}")
     raise
