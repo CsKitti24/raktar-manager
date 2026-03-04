@@ -13,5 +13,3 @@ class UserRole(db.Model):
 
     __table_args__ = (UniqueConstraint("user_id", "role_id"),)
 
-    user: Mapped["User"] = relationship(back_populates="user_roles")
-    role: Mapped["Role"] = relationship(back_populates="user_roles")
