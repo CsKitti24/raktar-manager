@@ -17,9 +17,8 @@ class Product(db.Model):
     sku: Mapped[str] = mapped_column(String(50))
     price: Mapped[float] = mapped_column(Float)
     is_active: Mapped[bool] = mapped_column(default = True)
-    created_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     
-
     category: Mapped["Category"] = relationship(back_populates="products")
     order_items: Mapped[List["OrderItem"]] = relationship(back_populates="product")
     inventories: Mapped[List["Inventory"]] = relationship(back_populates="product")
