@@ -20,7 +20,6 @@ from app.models.inventory import Inventory
 from app.models.inventory_log import InventoryLog
 
 
-
 # Create the Flask app and push the app context
 app = create_app(config_class=Config)
 app.app_context().push()
@@ -31,8 +30,8 @@ if not app.config.get("SQLALCHEMY_DATABASE_URI"):
 
 try:
     # Drop and recreate tables (optional, comment out if not desired)
-   # db.drop_all()
-   # db.create_all()
+    db.drop_all()
+    db.create_all()
 
     # Roles
     if not Role.query.filter_by(rolename="Admin").first():
@@ -272,10 +271,8 @@ try:
                  unit_price=product2.price,     
                  subtotal=product2.price * 1)
          
-        db.session.add_all([item1, item2])
-        db.session.commit()
-
-   
+    db.session.add_all([item1, item2])
+    db.session.commit()
 
     #Inventory Logs
     if not InventoryLog.query.first():
