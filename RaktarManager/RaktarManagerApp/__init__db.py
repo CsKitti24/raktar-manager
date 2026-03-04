@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+import email
 from sqlalchemy import DateTime
 import datetime
 
@@ -43,6 +44,27 @@ try:
             Role(rolename="Supplier")
         ])
         db.session.commit()
+
+    # Test User
+    if not User.query.filter_by(email="peldapeter@gmail.com").first():
+        user = User(username="Peter", 
+                    email="peldapeter@gmail.com",
+                    full_name="Példa Péter",
+                    phone="+36301234567")
+
+        user.setpassword("Jelszo123")
+        db.session.add(user)
+        db.session.commit()
+
+    # Assign roles to test user
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
+    admin_role = Role.query.filter_by(rolename="Admin").first()
+    user_role = Role.query.filter_by(rolename="Orderer").first()
+    if admin_role not in user.roles:
+        user.roles.append(admin_role)
+    if user_role not in user.roles:
+        user.roles.append(user_role)
+    db.session.commit()
 
     # Product
     if not Product.query.filter_by(name="Vezeték nélküli fülhallgató").first():
@@ -114,7 +136,7 @@ try:
     db.session.commit()
 
     # Address
-    user = User.query.filter_by(email="testuser@example.com").first()
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
     if user and not Address.query.first():
         
         address = Address(
@@ -153,7 +175,7 @@ try:
         db.session.commit()
 
     # Orders
-    user = User.query.filter_by(email="testuser@example.com").first()
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
     if user:
         address = Address.query.filter_by(user_id=user.id).first()
         if address:
@@ -211,6 +233,95 @@ try:
             is_active=1
         )
         db.session.add(loc6)
+    db.session.commit()
+
+    #Order items
+
+    order = Order.query.filter_by(order_number="ORD-2026-001").first()
+ 
+    if order:
+        product1 = Product.query.filter_by(name="Vezeték nélküli fülhallgató").first()
+        product2 = Product.query.filter_by(name="A tiszta kód").first()
+    
+        if product1 and product2 and not OrderItem.query.filter_by(order_id=order.id).first():
+         
+            item1 = OrderItem(order_id=order.id,
+                product_id=product1.id,
+                quantity=2,
+                unit_price=product1.price,      
+                subtotal=product1.price * 2)
+         
+            item2 = OrderItem(order_id=order.id,
+                 product_id=product2.id,
+                 quantity=1,
+                 unit_price=product2.price,     
+                 subtotal=product2.price * 1)
+         
+        db.session.add_all([item1, item2])
+        db.session.commit()
+
+    #Inventory
+    if not Inventory.query.first():
+        db.session.add_all([
+      
+            Inventory(product_id=1, location_id=2, quantity=48),
+            Inventory(product_id=2, location_id=3, quantity=19),
+            Inventory(product_id=3, location_id=4, quantity=5),
+            Inventory(product_id=4, location_id=1, quantity=15),
+            Inventory(product_id=5, location_id=6, quantity=30),
+            Inventory(product_id=6, location_id=4, quantity=12)
+        ])
+    db.session.commit()
+
+    #Inventory Logs
+    if not InventoryLog.query.first():
+        db.session.add_all([
+         
+            InventoryLog( inventory_id=1,
+                change_type="BE",
+                quantity_change=50,
+                performed_by=1,   
+                note="Kezdeti raktárkészlet feltöltés (Fülhallgató)"),
+         
+             InventoryLog( inventory_id=2,
+                 change_type="BE",
+                 quantity_change=20,
+                 performed_by=1,
+                 note="Kezdeti raktárkészlet feltöltés (A tiszta kód)"),
+
+             InventoryLog( inventory_id=1,
+                 order_id=1,     
+                 change_type="KI",
+                 quantity_change=-2,
+                 performed_by=1,
+                 note="Kiszolgálva az ORD-2026-001 rendeléshez"),
+        
+             InventoryLog( inventory_id=2,
+                 order_id=1,       
+                 change_type="KI",
+                 quantity_change=-1,
+                 performed_by=1,
+                 note="Kiszolgálva az ORD-2026-001 rendeléshez")
+        ])
+    db.session.commit()
+
+    #Complaints
+    if not Complaint.query.first():
+         db.session.add_all([
+             Complaint( order_id=1,
+                 user_id=1,
+                 description="Tisztelt Ügyfélszolgálat! A tegnap átvett csomagban a vezeték nélküli fülhallgató dobozából hiányzott az USB-C töltõkábel. Kérem a pótlását.",
+                 file_name="hianyzo_kabel_doboz.jpg",
+                 status="nyitott"),
+         
+             Complaint( order_id=1,
+                 user_id=1,
+                 description="A 'tiszta kód' címû könyv borítója csúnyán meg volt gyûrõdve, amikor kivettem a dobozból. Valószínûleg a szállításnál sérült meg.",
+                 file_name=None,
+                 status="lezárva",
+                 resolution="Elnézést kértünk a vásárlótól, és jóváírtunk egy 20%-os kedvezménykupont a következõ vásárlásához.",
+                 resolved_at=datetime(2026, 3, 5, 14, 30))
+         ])
     db.session.commit()
 
 except Exception as e:

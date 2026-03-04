@@ -7,6 +7,7 @@ from sqlalchemy.types import String
 from datetime import datetime
 from sqlalchemy import func
 from sqlalchemy.types import DateTime
+from werkzeug.security import generate_password_hash
 
 
 
@@ -29,3 +30,6 @@ class User(db.Model):
     orders_as_supplier: Mapped[List['Order']] = relationship(foreign_keys="[Order.supplier_id]", back_populates="supplier")
     orders_as_carrier: Mapped[List['Order']] = relationship(foreign_keys="[Order.carrier_id]", back_populates="carrier")
     orders_as_warehouse: Mapped[List['Order']] = relationship(foreign_keys="[Order.warehouse_user_id]", back_populates="warehouse_user")
+
+    def set_password(self, password: str) -> None:
+        self.password_hash = generate_password_hash(password)
