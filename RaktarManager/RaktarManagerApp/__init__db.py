@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+import email
 from sqlalchemy import DateTime
 import datetime
 
@@ -44,45 +45,66 @@ try:
         ])
         db.session.commit()
 
+    # Test User
+    if not User.query.filter_by(email="peldapeter@gmail.com").first():
+        user = User(username="Peter", 
+                    email="peldapeter@gmail.com",
+                    full_name="P√©lda P√©ter",
+                    phone="+36301234567")
+
+        user.setpassword("Jelszo123")
+        db.session.add(user)
+        db.session.commit()
+
+    # Assign roles to test user
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
+    admin_role = Role.query.filter_by(rolename="Admin").first()
+    user_role = Role.query.filter_by(rolename="Orderer").first()
+    if admin_role not in user.roles:
+        user.roles.append(admin_role)
+    if user_role not in user.roles:
+        user.roles.append(user_role)
+    db.session.commit()
+
     # Product
-    if not Product.query.filter_by(name="VezetÈk nÈlk¸li f¸lhallgatÛ").first():
+    if not Product.query.filter_by(name="Vezet√©k n√©lk√ºli f√ºlhallgat√≥").first():
         product = Product(
             category_id="3",
-            name="VezetÈk nÈlk¸li f¸lhallgatÛ",
-            description="Zajsz˚rıs Bluetooth f¸lhallgatÛ 20 Ûr·s ¸zemidıvel.",
+            name="Vezet√©k n√©lk√ºli f√ºlhallgat√≥",
+            description="Zajsz√ªr√µs Bluetooth f√ºlhallgat√≥ 20 √≥r√°s √ºzemid√µvel.",
             sku="ELEC-WF-001",
             price=25000.00,
             is_active=True,
             created_at=datetime(2026, 3, 1, 10, 15)
         )
         db.session.add(product)
-    if not Product.query.filter_by(name="A tiszta kÛd").first():
+    if not Product.query.filter_by(name="A tiszta k√≥d").first():
         product2 = Product(
             category_id="2",
-            name="A tiszta kÛd",
-            description="⁄tmutatÛ agilis szoftverfejlesztıknek.",
+            name="A tiszta k√≥d",
+            description="√ötmutat√≥ agilis szoftverfejleszt√µknek.",
             sku="BOOK-CLN-002",
             price=8500.00,
             is_active=True,
             created_at=datetime(2026, 3, 2, 14, 30)
         )
         db.session.add(product2)
-    if not Product.query.filter_by(name="ZEszpresszÛ K·vÈfızı").first():
+    if not Product.query.filter_by(name="ZEszpressz√≥ K√°v√©f√µz√µ").first():
         product3 = Product(
             category_id="1",
-            name="EszpresszÛ K·vÈfızı",
-            description="PrÈmium k·vÈfızı beÈpÌtett tejhabosÌtÛval.",
+            name="Eszpressz√≥ K√°v√©f√µz√µ",
+            description="Pr√©mium k√°v√©f√µz√µ be√©p√≠tett tejhabos√≠t√≥val.",
             sku="KITC-COF-003",
             price=45000.00,
             is_active=False,
             created_at=datetime(2026, 3, 3, 9)
         )
         db.session.add(product3)
-    if not Product.query.filter_by(name="VÌz·llÛ OkosÛra").first():
+    if not Product.query.filter_by(name="V√≠z√°ll√≥ Okos√≥ra").first():
         product4 = Product(
             category_id="3",
-            name="VÌz·llÛ OkosÛra",
-            description="OkosÛra pulzusmÈrıvel, lÈpÈssz·ml·lÛval Ès GPS-szel.",
+            name="V√≠z√°ll√≥ Okos√≥ra",
+            description="Okos√≥ra pulzusm√©r√µvel, l√©p√©ssz√°ml√°l√≥val √©s GPS-szel.",
             sku="ELEC-SMW-004",
             price=55000.00,
             is_active=True,
@@ -93,18 +115,18 @@ try:
         product5 = Product(
             category_id="2",
             name="Python Mesterkurzus",
-            description="HaladÛ programoz·si technik·k Ès webfejlesztÈs.",
+            description="Halad√≥ programoz√°si technik√°k √©s webfejleszt√©s.",
             sku="BOOK-PYT-005",
             price=12000.00,
             is_active=True,
             created_at=datetime(2026, 2, 28, 16, 20)
         )
         db.session.add(product5)
-    if not Product.query.filter_by(name="KÈtrekeszes KenyÈrpirÌtÛ").first():
+    if not Product.query.filter_by(name="K√©trekeszes Keny√©rpir√≠t√≥").first():
         product6 = Product(
             category_id="1",
-            name="KÈtrekeszes KenyÈrpirÌtÛ",
-            description="AcÈl bevonat˙ pirÌtÛ 6 k¸lˆnbˆzı fokozattal.",
+            name="K√©trekeszes Keny√©rpir√≠t√≥",
+            description="Ac√©l bevonat√∫ pir√≠t√≥ 6 k√ºl√∂nb√∂z√µ fokozattal.",
             sku="KITC-TOA-006",
             price=14500.00,
             is_active=True,
@@ -114,30 +136,30 @@ try:
     db.session.commit()
 
     # Address
-    user = User.query.filter_by(email="testuser@example.com").first()
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
     if user and not Address.query.first():
         
         address = Address(
             user_id=user.id,
-            country="Magyarorsz·g",
+            country="Magyarorsz√°g",
             city="Budapest",
-            street="Kossuth Lajos tÈr 1-3.",
+            street="Kossuth Lajos t√©r 1-3.",
             postal_code="1055"
         )
         db.session.add(address)
         address1 = Address(
             user_id=user.id,
-            country="Magyarorsz·g",
-            city="VeszprÈm",
+            country="Magyarorsz√°g",
+            city="Veszpr√©m",
             street="Egyetem utca 10.",
             postal_code="8200"
         )
         db.session.add(address1)
         address2 = Address(
             user_id=user.id,
-            country="Magyarorsz·g",
+            country="Magyarorsz√°g",
             city="Szeged",
-            street="K·r·sz utca 5.",
+            street="K√°r√°sz utca 5.",
             postal_code="6720"
         )
         db.session.add(address2)
@@ -147,13 +169,13 @@ try:
     if not Category.query.filter_by(catname="Elektronika").first():
         db.session.add_all([
             Category(catname="Konyhai", id=1),
-            Category(catname="Kˆnyv", id=2),
+            Category(catname="K√∂nyv", id=2),
             Category(catname="Elektronika", id=3)
         ])
         db.session.commit()
 
     # Orders
-    user = User.query.filter_by(email="testuser@example.com").first()
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
     if user:
         address = Address.query.filter_by(user_id=user.id).first()
         if address:
@@ -172,7 +194,7 @@ try:
     if not StorageLocation.query.filter_by(code="A-01").first():
         loc1 = StorageLocation(
             code="A-01",
-            description="A sor, 1. polc (Elektronika fırakt·r)",
+            description="A sor, 1. polc (Elektronika f√µrakt√°r)",
             is_active=1
         )
         db.session.add(loc1)
@@ -186,34 +208,123 @@ try:
     if not StorageLocation.query.filter_by(code="B-01").first():
         loc3 = StorageLocation(
             code="B-01",
-            description="B sor, 1. polc (Kˆnyvek Ès kiadv·nyok)",
+            description="B sor, 1. polc (K√∂nyvek √©s kiadv√°nyok)",
             is_active=1
         )
         db.session.add(loc3)
     if not StorageLocation.query.filter_by(code="C-01").first():
         loc4 = StorageLocation(
             code="C-01",
-            description="C sor, 1. polc (KonyhafelszerelÈs)",
+            description="C sor, 1. polc (Konyhafelszerel√©s)",
             is_active=1
         )
         db.session.add(loc4)
     if not StorageLocation.query.filter_by(code="C-02").first():
         loc5 = StorageLocation(
             code="C-02",
-            description="C sor, 2. polc (TˆrÈkeny konyhai ·ru)",
+            description="C sor, 2. polc (T√∂r√©keny konyhai √°ru)",
             is_active=1
         )
         db.session.add(loc5)
     if not StorageLocation.query.filter_by(code="B-02").first():
         loc6 = StorageLocation(
             code="B-02",
-            description="B sor, 2. polc (OktatÛanyagok Ès f¸zetek)",
+            description="B sor, 2. polc (Oktat√≥anyagok √©s f√ºzetek)",
             is_active=1
         )
         db.session.add(loc6)
     db.session.commit()
 
+    #Order items
+
+    order = Order.query.filter_by(order_number="ORD-2026-001").first()
+ 
+    if order:
+        product1 = Product.query.filter_by(name="Vezet√©k n√©lk√ºli f√ºlhallgat√≥").first()
+        product2 = Product.query.filter_by(name="A tiszta k√≥d").first()
+    
+        if product1 and product2 and not OrderItem.query.filter_by(order_id=order.id).first():
+         
+            item1 = OrderItem(order_id=order.id,
+                product_id=product1.id,
+                quantity=2,
+                unit_price=product1.price,      
+                subtotal=product1.price * 2)
+         
+            item2 = OrderItem(order_id=order.id,
+                 product_id=product2.id,
+                 quantity=1,
+                 unit_price=product2.price,     
+                 subtotal=product2.price * 1)
+         
+        db.session.add_all([item1, item2])
+        db.session.commit()
+
+    #Inventory
+    if not Inventory.query.first():
+        db.session.add_all([
+      
+            Inventory(product_id=1, location_id=2, quantity=48),
+            Inventory(product_id=2, location_id=3, quantity=19),
+            Inventory(product_id=3, location_id=4, quantity=5),
+            Inventory(product_id=4, location_id=1, quantity=15),
+            Inventory(product_id=5, location_id=6, quantity=30),
+            Inventory(product_id=6, location_id=4, quantity=12)
+        ])
+    db.session.commit()
+
+    #Inventory Logs
+    if not InventoryLog.query.first():
+        db.session.add_all([
+         
+            InventoryLog( inventory_id=1,
+                change_type="BE",
+                quantity_change=50,
+                performed_by=1,   
+                note="Kezdeti rakt√°rk√©szlet felt√∂lt√©s (F√ºlhallgat√≥)"),
+         
+             InventoryLog( inventory_id=2,
+                 change_type="BE",
+                 quantity_change=20,
+                 performed_by=1,
+                 note="Kezdeti rakt√°rk√©szlet felt√∂lt√©s (A tiszta k√≥d)"),
+
+             InventoryLog( inventory_id=1,
+                 order_id=1,     
+                 change_type="KI",
+                 quantity_change=-2,
+                 performed_by=1,
+                 note="Kiszolg√°lva az ORD-2026-001 rendel√©shez"),
+        
+             InventoryLog( inventory_id=2,
+                 order_id=1,       
+                 change_type="KI",
+                 quantity_change=-1,
+                 performed_by=1,
+                 note="Kiszolg√°lva az ORD-2026-001 rendel√©shez")
+        ])
+    db.session.commit()
+
+    #Complaints
+    if not Complaint.query.first():
+         db.session.add_all([
+             Complaint( order_id=1,
+                 user_id=1,
+                 description="Tisztelt √úgyf√©lszolg√°lat! A tegnap √°tvett csomagban a vezet√©k n√©lk√ºli f√ºlhallgat√≥ doboz√°b√≥l hi√°nyzott az USB-C t√∂lt√µk√°bel. K√©rem a p√≥tl√°s√°t.",
+                 file_name="hianyzo_kabel_doboz.jpg",
+                 status="nyitott"),
+         
+             Complaint( order_id=1,
+                 user_id=1,
+                 description="A 'tiszta k√≥d' c√≠m√ª k√∂nyv bor√≠t√≥ja cs√∫ny√°n meg volt gy√ªr√µdve, amikor kivettem a dobozb√≥l. Val√≥sz√≠n√ªleg a sz√°ll√≠t√°sn√°l s√©r√ºlt meg.",
+                 file_name=None,
+                 status="lez√°rva",
+                 resolution="Eln√©z√©st k√©rt√ºnk a v√°s√°rl√≥t√≥l, √©s j√≥v√°√≠rtunk egy 20%-os kedvezm√©nykupont a k√∂vetkez√µ v√°s√°rl√°s√°hoz.",
+                 resolved_at=datetime(2026, 3, 5, 14, 30))
+         ])
+    db.session.commit()
+
 except Exception as e:
     db.session.rollback()
-    print(f"Hib·ba ¸tkˆzˆtt: {e}")
+    print(f"Hib√°ba √ºtk√∂z√∂tt: {e}")
     raise
