@@ -13,8 +13,7 @@ class Address(db.Model):
     country: Mapped[str] = mapped_column(String(50))
     city: Mapped[str] = mapped_column(String(100))
     street: Mapped[str] = mapped_column(String(255))
-    street_number: Mapped[str] = mapped_column(String(20))
-    zip_code: Mapped[str] = mapped_column(String(20))
+    postal_code: Mapped[str] = mapped_column(String(20))
 
     user: Mapped["User"] = relationship(back_populates="addresses")
     orders: Mapped[List["Order"]] = relationship(back_populates="address")
