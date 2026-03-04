@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List
 from sqlalchemy.types import String
 
-#ez nincs kész csak leteszteltem
+#ez nincs kï¿½sz csak leteszteltem
 class User(db.Model):
     __tablename__ = 'users'
     id: Mapped[int] = mapped_column(primary_key=True)
