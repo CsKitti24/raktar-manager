@@ -45,6 +45,15 @@ try:
         ])
         db.session.commit()
 
+    # Categories
+    if not Category.query.filter_by(catname="Elektronika").first():
+        db.session.add_all([
+            Category(catname="Konyhai", id=1),
+            Category(catname="Könyv", id=2),
+            Category(catname="Elektronika", id=3)
+        ])
+    db.session.commit()
+
     # Test User
     if not User.query.filter_by(email="peldapeter@gmail.com").first():
         user = User(username="Peter", 
@@ -66,6 +75,36 @@ try:
         user.roles.append(user_role)
     db.session.commit()
 
+    # Address
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
+    if user and not Address.query.first():
+        
+        address = Address(
+            user_id=user.id,
+            country="Magyarország",
+            city="Budapest",
+            street="Kossuth Lajos tér 1-3.",
+            postal_code="1055"
+        )
+        db.session.add(address)
+        address1 = Address(
+            user_id=user.id,
+            country="Magyarország",
+            city="Veszprém",
+            street="Egyetem utca 10.",
+            postal_code="8200"
+        )
+        db.session.add(address1)
+        address2 = Address(
+            user_id=user.id,
+            country="Magyarország",
+            city="Szeged",
+            street="Kárász utca 5.",
+            postal_code="6720"
+        )
+        db.session.add(address2)
+    db.session.commit()
+    
     # Product
     if not Product.query.filter_by(name="Vezeték nélküli fülhallgató").first():
         product = Product(
@@ -135,62 +174,7 @@ try:
         db.session.add(product6)
     db.session.commit()
 
-    # Address
-    user = User.query.filter_by(email="peldapeter@gmail.com").first()
-    if user and not Address.query.first():
-        
-        address = Address(
-            user_id=user.id,
-            country="Magyarország",
-            city="Budapest",
-            street="Kossuth Lajos tér 1-3.",
-            postal_code="1055"
-        )
-        db.session.add(address)
-        address1 = Address(
-            user_id=user.id,
-            country="Magyarország",
-            city="Veszprém",
-            street="Egyetem utca 10.",
-            postal_code="8200"
-        )
-        db.session.add(address1)
-        address2 = Address(
-            user_id=user.id,
-            country="Magyarország",
-            city="Szeged",
-            street="Kárász utca 5.",
-            postal_code="6720"
-        )
-        db.session.add(address2)
-    db.session.commit()
-
-    # Categories
-    if not Category.query.filter_by(catname="Elektronika").first():
-        db.session.add_all([
-            Category(catname="Konyhai", id=1),
-            Category(catname="Könyv", id=2),
-            Category(catname="Elektronika", id=3)
-        ])
-        db.session.commit()
-
-    # Orders
-    user = User.query.filter_by(email="peldapeter@gmail.com").first()
-    if user:
-        address = Address.query.filter_by(user_id=user.id).first()
-        if address:
-                if not Order.query.filter_by(order_number="ORD-2026-001").first():
-                    order = Order(
-                        order_number="ORD-2026-001",
-                        orderer_id=user.id,
-                        address_id=address.id,
-                        status="kifizetve", 
-                        total_amount=58500.00 
-                    )
-                    db.session.add(order)
-                    db.session.commit()
-
-    # Storage
+     # Storage
     if not StorageLocation.query.filter_by(code="A-01").first():
         loc1 = StorageLocation(
             code="A-01",
@@ -235,6 +219,37 @@ try:
         db.session.add(loc6)
     db.session.commit()
 
+     #Inventory
+    if not Inventory.query.first():
+        db.session.add_all([
+      
+            Inventory(product_id=1, location_id=2, quantity=48),
+            Inventory(product_id=2, location_id=3, quantity=19),
+            Inventory(product_id=3, location_id=4, quantity=5),
+            Inventory(product_id=4, location_id=1, quantity=15),
+            Inventory(product_id=5, location_id=6, quantity=30),
+            Inventory(product_id=6, location_id=4, quantity=12)
+        ])
+    db.session.commit()
+    
+    # Orders
+    user = User.query.filter_by(email="peldapeter@gmail.com").first()
+    if user:
+        address = Address.query.filter_by(user_id=user.id).first()
+        if address:
+                if not Order.query.filter_by(order_number="ORD-2026-001").first():
+                    order = Order(
+                        order_number="ORD-2026-001",
+                        orderer_id=user.id,
+                        address_id=address.id,
+                        status="kifizetve", 
+                        total_amount=58500.00 
+                    )
+                    db.session.add(order)
+                    db.session.commit()
+
+   
+
     #Order items
 
     order = Order.query.filter_by(order_number="ORD-2026-001").first()
@@ -260,18 +275,7 @@ try:
         db.session.add_all([item1, item2])
         db.session.commit()
 
-    #Inventory
-    if not Inventory.query.first():
-        db.session.add_all([
-      
-            Inventory(product_id=1, location_id=2, quantity=48),
-            Inventory(product_id=2, location_id=3, quantity=19),
-            Inventory(product_id=3, location_id=4, quantity=5),
-            Inventory(product_id=4, location_id=1, quantity=15),
-            Inventory(product_id=5, location_id=6, quantity=30),
-            Inventory(product_id=6, location_id=4, quantity=12)
-        ])
-    db.session.commit()
+   
 
     #Inventory Logs
     if not InventoryLog.query.first():
