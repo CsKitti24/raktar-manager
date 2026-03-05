@@ -12,7 +12,7 @@ from app.models.address import Address
 from app.models.category import Category
 from app.models.product import Product
 from app.models.user_role import UserRole
-from app.models.order import Order, StatusEnum
+from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.complaint import Complaint
 from app.models.storage import StorageLocation
@@ -28,9 +28,9 @@ app.app_context().push()
 if not app.config.get("SQLALCHEMY_DATABASE_URI"):
     raise ValueError("Database URI not set in configuration")
 
-try:
+#try:
     # Drop and recreate tables (optional, comment out if not desired)
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
 
     # Roles
@@ -45,11 +45,11 @@ try:
         db.session.commit()
 
     # Categories
-    if not Category.query.filter_by(catname="Elektronika").first():
+    if not Category.query.filter_by(name="Elektronika").first():
         db.session.add_all([
-            Category(catname="Konyhai", id=1),
-            Category(catname="Könyv", id=2),
-            Category(catname="Elektronika", id=3)
+            Category(name="Konyhai", id=1),
+            Category(name="Könyv", id=2),
+            Category(name="Elektronika", id=3)
         ])
     db.session.commit()
 
@@ -60,7 +60,7 @@ try:
                     full_name="Példa Péter",
                     phone="+36301234567")
 
-        user.setpassword("Jelszo123")
+        user.set_password("Jelszo123")
         db.session.add(user)
         db.session.commit()
 
@@ -107,7 +107,7 @@ try:
     # Product
     if not Product.query.filter_by(name="Vezeték nélküli fülhallgató").first():
         product = Product(
-            category_id="3",
+            category_id=3,
             name="Vezeték nélküli fülhallgató",
             description="Zajszûrõs Bluetooth fülhallgató 20 órás üzemidõvel.",
             sku="ELEC-WF-001",
@@ -118,7 +118,7 @@ try:
         db.session.add(product)
     if not Product.query.filter_by(name="A tiszta kód").first():
         product2 = Product(
-            category_id="2",
+            category_id=2,
             name="A tiszta kód",
             description="Útmutató agilis szoftverfejlesztõknek.",
             sku="BOOK-CLN-002",
@@ -129,7 +129,7 @@ try:
         db.session.add(product2)
     if not Product.query.filter_by(name="ZEszpresszó Kávéfõzõ").first():
         product3 = Product(
-            category_id="1",
+            category_id=1,
             name="Eszpresszó Kávéfõzõ",
             description="Prémium kávéfõzõ beépített tejhabosítóval.",
             sku="KITC-COF-003",
@@ -140,7 +140,7 @@ try:
         db.session.add(product3)
     if not Product.query.filter_by(name="Vízálló Okosóra").first():
         product4 = Product(
-            category_id="3",
+            category_id=3,
             name="Vízálló Okosóra",
             description="Okosóra pulzusmérõvel, lépésszámlálóval és GPS-szel.",
             sku="ELEC-SMW-004",
@@ -151,7 +151,7 @@ try:
         db.session.add(product4)
     if not Product.query.filter_by(name="Python Mesterkurzus").first():
         product5 = Product(
-            category_id="2",
+            category_id=2,
             name="Python Mesterkurzus",
             description="Haladó programozási technikák és webfejlesztés.",
             sku="BOOK-PYT-005",
@@ -162,7 +162,7 @@ try:
         db.session.add(product5)
     if not Product.query.filter_by(name="Kétrekeszes Kenyérpirító").first():
         product6 = Product(
-            category_id="1",
+            category_id=1,
             name="Kétrekeszes Kenyérpirító",
             description="Acél bevonatú pirító 6 különbözõ fokozattal.",
             sku="KITC-TOA-006",
@@ -271,8 +271,8 @@ try:
                  unit_price=product2.price,     
                  subtotal=product2.price * 1)
          
-    db.session.add_all([item1, item2])
-    db.session.commit()
+        db.session.add_all([item1, item2])
+        db.session.commit()
 
     #Inventory Logs
     if not InventoryLog.query.first():
@@ -325,7 +325,7 @@ try:
          ])
     db.session.commit()
 
-except Exception as e:
-    db.session.rollback()
-    print(f"Hibába ütközött: {e}")
-    raise
+#except Exception as e:
+    #db.session.rollback()
+    #print(f"Hibába ütközött: {e}")
+    #raise
