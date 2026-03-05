@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from app.extensions import db
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import List
+from typing import List, Optional
 from sqlalchemy.types import String
 from datetime import datetime
 from sqlalchemy import func
@@ -21,7 +21,7 @@ class User(db.Model):
     phone: Mapped[str] = mapped_column(String(20))
     is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(onupdate=func.now())
+    updated_at: Mapped[Optional[datetime]] = mapped_column(onupdate=func.now(), nullable=True)
     addresses: Mapped[List['Address']] = relationship(back_populates='user')
     complaints: Mapped[List['Complaint']] = relationship(back_populates='user')
 
@@ -29,6 +29,7 @@ class User(db.Model):
     orders_as_supplier: Mapped[List['Order']] = relationship(foreign_keys="[Order.supplier_id]", back_populates="supplier")
     orders_as_carrier: Mapped[List['Order']] = relationship(foreign_keys="[Order.carrier_id]", back_populates="carrier")
     orders_as_warehouse: Mapped[List['Order']] = relationship(foreign_keys="[Order.warehouse_user_id]", back_populates="warehouse_user")
+    inventory_logs: Mapped[list["InventoryLog"]] = relationship(back_populates="performer")
 
     def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)
