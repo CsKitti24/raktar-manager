@@ -18,7 +18,7 @@ from app.models.storage import StorageLocation
 from app.models.inventory import Inventory
 from app.models.inventory_log import InventoryLog
 
-# Alkalmazás és kontextus létrehozása
+
 app = create_app(config_class=Config)
 
 def seed_database():
@@ -263,7 +263,7 @@ def seed_database():
             print("lefutott")
         except Exception as e:
             db.session.rollback()
-            print(f"\n[HIBA] A feltöltés megszakadt egy hiba miatt: {e}")
+            print(f"\nHIBA A feltöltés megszakadt egy hiba miatt: {e}")
             raise
 
 if __name__ == "__main__":

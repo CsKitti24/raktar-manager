@@ -17,6 +17,7 @@
     <Name>RaktarManager</Name>
     <RootNamespace>RaktarManager</RootNamespace>
     <WebBrowserPort>8888</WebBrowserPort>
+    <InterpreterId>MSBuild|env1|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,18 +28,28 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="RaktarManagerApp\app\blueprints\user\routes.py" />
+    <Compile Include="RaktarManagerApp\app\blueprints\user\schemas.py" />
+    <Compile Include="RaktarManagerApp\app\blueprints\user\service.py" />
+    <Compile Include="RaktarManagerApp\app\blueprints\user\__init__.py" />
+    <Compile Include="RaktarManagerApp\app\blueprints\__init__.py" />
     <Compile Include="RaktarManagerApp\app\extensions.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="RaktarManagerApp\app\main\routes.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="RaktarManagerApp\app\main\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="RaktarManagerApp\app\models\address.py" />
+    <Compile Include="RaktarManagerApp\app\models\category.py" />
+    <Compile Include="RaktarManagerApp\app\models\complaint.py" />
+    <Compile Include="RaktarManagerApp\app\models\inventory.py" />
+    <Compile Include="RaktarManagerApp\app\models\inventory_log.py" />
+    <Compile Include="RaktarManagerApp\app\models\order.py" />
+    <Compile Include="RaktarManagerApp\app\models\order_item.py" />
+    <Compile Include="RaktarManagerApp\app\models\product.py" />
+    <Compile Include="RaktarManagerApp\app\models\role.py" />
+    <Compile Include="RaktarManagerApp\app\models\storage.py" />
     <Compile Include="RaktarManagerApp\app\models\user.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RaktarManagerApp\app\models\user_role.py" />
     <Compile Include="RaktarManagerApp\app\models\__init__.py">
       <SubType>Code</SubType>
     </Compile>
@@ -53,6 +64,7 @@
     <Compile Include="RaktarManagerApp\run.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="RaktarManagerApp\__init__db.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="RaktarManagerApp\.flaskenv">
@@ -69,13 +81,34 @@
   <ItemGroup>
     <Folder Include="RaktarManagerApp\" />
     <Folder Include="RaktarManagerApp\app\" />
-    <Folder Include="RaktarManagerApp\app\main\" />
+    <Folder Include="RaktarManagerApp\app\blueprints\user\" />
     <Folder Include="RaktarManagerApp\app\models\" />
+    <Folder Include="RaktarManagerApp\app\blueprints\" />
     <Folder Include="RaktarManagerApp\app\templates\" />
     <Folder Include="RaktarManagerApp\migrations\" />
     <Folder Include="RaktarManagerApp\migrations\versions\" />
     <Folder Include="RaktarManagerApp\migrations\versions\__pycache__\" />
     <Folder Include="RaktarManagerApp\migrations\__pycache__\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="env1\">
+      <Id>env1</Id>
+      <Version>3.9</Version>
+      <Description>env1 (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+    <Interpreter Include="env\">
+      <Id>env</Id>
+      <Version>3.9</Version>
+      <Description>env (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Web.targets" />
   <!-- Specify pre- and post-build commands in the BeforeBuild and 
