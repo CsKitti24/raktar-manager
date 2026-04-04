@@ -1,6 +1,7 @@
 from apiflask import APIBlueprint
 bp = APIBlueprint('main', __name__, tag="main")
 from app.blueprints import bp
+from app.models import *
 
 @bp.route('/')
 def index():
@@ -10,4 +11,3 @@ def index():
 from app.blueprints.user import bp as bp_user
 bp.register_blueprint(bp_user, url_prefix='/user')
 
-from app.models import *
