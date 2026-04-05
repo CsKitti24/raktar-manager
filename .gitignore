@@ -143,6 +143,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+env1/
+env2/
 
 # Spyder project settings
 .spyderproject
@@ -187,6 +189,8 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file. However, if you prefer, 
 #  you could uncomment the following to ignore the entire vscode folder
 # .vscode/
+*.pyuser
+.vs/
 
 # Ruff stuff:
 .ruff_cache/
