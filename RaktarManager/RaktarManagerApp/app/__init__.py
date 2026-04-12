@@ -15,5 +15,10 @@ def create_app(config_class=Config):
     from app.blueprints import bp as bp_default
     app.register_blueprint(bp_default, url_prefix='/api')
 
+    from app.blueprints.user.routes import bp as user_bp
+    app.register_blueprint(user_bp)
+
+    from app.blueprints.product.routes import bp as product_bp
+    app.register_blueprint(product_bp)
 
     return app
