@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields
-from apiflask.fields import String, Email, Nested, Integer, List
+from apiflask.fields import String, Email, Nested, Integer, List, Boolean
 from apiflask.validators import Email
+
 
 #Address 
 class AddressSchema(Schema):
@@ -27,3 +28,26 @@ class UserResponseSchema(Schema):
 class UserLoginSchema(Schema):
     email = String(validate=Email())
     password = fields.String()
+
+#Szerepkörök megjelenítése
+class RoleSchema(Schema):
+    id = fields.Integer()
+    rolename = fields.String()
+
+
+class UserUpdateSchema(Schema):
+    full_name = fields.String()
+    phone = fields.String()
+    is_active = fields.Boolean()
+
+
+class UserProfileUpdateSchema(Schema):
+    phone = fields.String()
+    email = fields.String()
+
+#Részletes felhasználói adatok (Admin listához)
+class UserDetailResponseSchema(UserResponseSchema):
+    full_name = fields.String()
+    phone = fields.String()
+    is_active = fields.Boolean()
+    roles = fields.List(fields.Nested(RoleSchema))

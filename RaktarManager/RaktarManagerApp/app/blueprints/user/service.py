@@ -3,7 +3,6 @@ from app.blueprints.user.schemas import UserResponseSchema
 from app.models.user import User
 from app.models.address import Address
 from app.models.role import Role
-
 from sqlalchemy import select
 
 class UserService:
@@ -35,3 +34,40 @@ class UserService:
         return True, UserResponseSchema().dump(user)
 
 
+class UserService:
+    @staticmethod
+    def get_all_users():
+        return db.session.execute(select(User)).scalars().all()
+
+    @staticmethod
+    def get_user_by_id(user_id):
+        return db.session.get(User, user_id)
+
+    @staticmethod
+    def update_user(user_id, data):
+        user = db.session.get(User, user_id)
+        if user:
+            for key, value in data.items():
+                setattr(user, key, value)
+            db.session.commit()
+            return True, user
+        return False, "User not found"
+
+    @staticmethod
+    def delete_user(user_id):
+        user = db.session.get(User, user_id)
+        if user:
+            user.is_active = False 
+            db.session.commit()
+            return True
+        return False
+
+    @staticmethod
+    def add_address(user_id, address_data):
+        user = db.session.get(User, user_id)
+        if user:
+            new_address = Address(**address_data, user_id=user_id)
+            db.session.add(new_address)
+            db.session.commit()
+            return True, new_address
+        return False, "User not found"
