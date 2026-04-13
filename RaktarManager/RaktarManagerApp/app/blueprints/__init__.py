@@ -1,4 +1,4 @@
-from apiflask import APIBlueprint
+﻿from apiflask import APIBlueprint
 bp = APIBlueprint('main', __name__, tag="main")
 from app.blueprints import bp
 from app.models import *
@@ -7,6 +7,7 @@ from app.extensions import auth
 from flask import current_app
 from datetime import datetime
 from authlib.jose import jwt
+from functools import wraps
 
 @bp.route('/')
 def index():
@@ -28,11 +29,17 @@ def verify_token(token):
 
 def role_required(roles):
     def wrapper(fn):
+        @wraps(fn)
         def decorated_function(*args, **kwargs):
-            user_roles = [item["name"] for item in auth.current_user.get("roles")]
-            for role in roles:
-                if role in user_roles:
-                    return fn(*args, **kwargs)        
+            roles_data = auth.current_user.get("roles") or []
+            user_roles = [r.get("rolename") for r in roles_data if isinstance(r, dict) and r.get("rolename")]
+
+            #Csak teszteleshez van itt
+            print(f"DEBUG: Elvárt: {roles}, User roles: {auth.current_user.get('roles')}")
+
+            has_permission = any(role in user_roles for role in roles)
+            if has_permission:
+                return fn(*args, **kwargs)       
             raise HTTPError(message="Access denied", status_code=403)
         return decorated_function
     return wrapper
