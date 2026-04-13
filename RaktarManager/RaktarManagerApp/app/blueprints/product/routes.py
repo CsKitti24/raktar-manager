@@ -1,27 +1,48 @@
-from apiflask import APIBlueprint, HTTPError
-from .schemas import ProductSchema, CategorySchema
-from .service import ProductService
+﻿from apiflask import APIBlueprint, HTTPError
+from app.blueprints.product import bp
+from app.blueprints.product.schemas import ProductSchema, CategorySchema, ProductUpdateSchema
+from app.blueprints.product.service import ProductService
+from app.blueprints import role_required 
 
-bp = APIBlueprint('product', __name__, url_prefix='/api')
+@bp.route('/')
 
-@bp.get('/products')
-@bp.output(ProductSchema(many=True))
-def list_products():
-    return ProductService.get_all_products()
+def index():
+    return 'This is The Product Blueprint'
 
-@bp.post('/products')
-@bp.input(ProductSchema, location="json")
-@bp.output(ProductSchema)
-def create_product(json_data):
-    return ProductService.create_product(json_data)
-
+#kategoriak
 @bp.get('/categories')
 @bp.output(CategorySchema(many=True))
-def list_categories():
+def get_categories():
     return ProductService.get_all_categories()
 
 @bp.post('/categories')
-@bp.input(CategorySchema, location="json")
-@bp.output(CategorySchema)
-def create_category(json_data):
+@role_required(['Admin'])
+@bp.input(CategorySchema)
+def add_category(json_data):
     return ProductService.create_category(json_data)
+
+#termekek
+@bp.get('/products')
+@bp.output(ProductSchema(many=True))
+def list_products():
+    return ProductService.get_products()
+
+@bp.post('/products')
+@role_required(['Admin'])
+@bp.input(ProductSchema)
+def add_product(json_data):
+    return ProductService.create_product(json_data)
+
+@bp.put('/products/<int:id>')
+@role_required(['Admin'])
+@bp.input(ProductUpdateSchema)
+def update_product(id, json_data):
+    res = ProductService.update_product(id, json_data)
+    if not res: raise HTTPError(404)
+    return res
+
+@bp.delete('/products/<int:id>')
+@role_required(['Admin'])
+def delete_product(id):
+    if ProductService.delete_product(id): return {"message": "Sikeres törlés"}
+    raise HTTPError(404)

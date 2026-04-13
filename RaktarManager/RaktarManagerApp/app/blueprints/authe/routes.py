@@ -1,0 +1,40 @@
+﻿from apiflask import APIBlueprint, HTTPError
+from app.blueprints.authe import bp
+from app.extensions import auth
+from app.blueprints.authe.schemas import UserLoginSchema, RegisterRequestSchema, TokenResponseSchema, UserResponseSchema
+from app.blueprints.authe.service import AuthService
+
+@bp.route('/')
+
+def index():
+    return 'This is The Auth Blueprint'
+
+@bp.post('/register')
+@bp.input(RegisterRequestSchema)
+@bp.output(UserResponseSchema)
+def register(json_data):
+    success, res = AuthService.register(json_data)
+    if success: return res
+    raise HTTPError(400, res)
+
+@bp.post('/login')
+@bp.input(UserLoginSchema)
+@bp.output(TokenResponseSchema)
+def login(json_data):
+    success, res = AuthService.login(json_data)
+    if success: return res
+    raise HTTPError(401, res)
+
+@bp.post('/logout')
+@auth.login_required
+def logout():
+    #token feketelista vagy kliens oldali torles
+    return {"message": "Sikeres kijelentkezés"}, 200
+
+@bp.get('/me')
+@auth.login_required
+def get_me():
+    #aktualis felhasznalo lekerdezese
+    from app.models.user import User
+    user = User.query.get(auth.current_user['user_id'])
+    return {"id": user.id, "username": user.username, "roles": [r.rolename for r in user.roles]}

@@ -1,58 +1,37 @@
-﻿from flask import jsonify
+﻿from apiflask import APIBlueprint, HTTPError
 from app.blueprints.user import bp
-from app.blueprints.user.schemas import UserResponseSchema, UserRequestSchema, AddressSchema, UserLoginSchema
-from app.blueprints.user.service import UserService
-from apiflask import HTTPError
-from apiflask.fields import String, Email, Nested, Integer, List
 from app.extensions import auth
-from .schemas import UserDetailResponseSchema, UserUpdateSchema, AddressSchema
+from app.blueprints import role_required
+from app.blueprints.user.schemas import UserDetailResponseSchema, UserUpdateSchema, RoleUpdateSchema, UserProfileUpdateSchema
+from app.blueprints.user.service import UserService
 
 @bp.route('/')
 
 def index():
     return 'This is The User Blueprint'
 
-
-#regisztráció
-@bp.post('/registrate')
-@bp.input(UserRequestSchema, location="json")
-@bp.output(UserResponseSchema)
-def user_registrate(json_data):
-    success, response = UserService.user_registrate(json_data)
-    if success:
-        return response, 200
-    raise HTTPError(message=response, status_code=400)
-
-#beléptetés
-@bp.post('/login')
-@bp.doc(tags=["user"])
-@bp.input(UserLoginSchema, location="json")
-@bp.output(UserResponseSchema)
-def user_login(json_data):
-    success, response = UserService.user_login(json_data)
-    if success:
-        return response, 200
-    raise HTTPError(message=response, status_code=400)
-
 @bp.get('/')
+@role_required(['Admin'])
 @bp.output(UserDetailResponseSchema(many=True))
 def get_users():
-    return UserService.get_all_users()
+    return UserService.get_all()
 
-@bp.get('/<int:user_id>')
-@bp.output(UserDetailResponseSchema)
-def get_user(user_id):
-    user = UserService.get_user_by_id(user_id)
-    if not user:
-        raise HTTPError(404, "User not found")
-    return user
+@bp.put('/<int:id>/roles')
+@role_required(['Admin'])
+@bp.input(RoleUpdateSchema)
+def update_roles(id, json_data):
+    success, res = UserService.update_roles(id, json_data['role_ids'])
+    if success: return {"message": res}
+    raise HTTPError(404, res)
 
-@bp.post('/me/addresses')
-@bp.input(AddressSchema, location="json")
-@bp.output(AddressSchema)
-def add_my_address(json_data):
-    # Itt élesben a bejelentkezett user ID kellene (tokenből)
-    # Most példaként vegyünk egy user_id-t a headerből vagy fixen
-    success, res = UserService.add_address(user_id=1, address_data=json_data)
-    if success: return res
-    raise HTTPError(400, res)
+@bp.delete('/<int:id>')
+@role_required(['Admin'])
+def deactivate_user(id):
+    if UserService.deactivate(id): return {"message": "User deactivated"}
+    raise HTTPError(404, "User not found")
+
+@bp.put('/me/profile')
+@auth.login_required
+@bp.input(UserProfileUpdateSchema)
+def update_my_profile(json_data):
+    pass
