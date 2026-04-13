@@ -7,6 +7,7 @@ from app.extensions import auth
 from flask import current_app
 from datetime import datetime
 from authlib.jose import jwt
+from functools import wraps
 
 @bp.route('/')
 def index():
@@ -28,6 +29,7 @@ def verify_token(token):
 
 def role_required(roles):
     def wrapper(fn):
+        @wraps(fn)
         def decorated_function(*args, **kwargs):
             roles_data = auth.current_user.get("roles") or []
             user_roles = [r.get("rolename") for r in roles_data if isinstance(r, dict) and r.get("rolename")]
