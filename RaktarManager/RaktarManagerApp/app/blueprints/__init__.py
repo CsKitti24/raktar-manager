@@ -1,6 +1,5 @@
 ﻿from apiflask import APIBlueprint
 bp = APIBlueprint('main', __name__, tag="main")
-from app.blueprints import bp
 from app.models import *
 from apiflask import HTTPError
 from app.extensions import auth
