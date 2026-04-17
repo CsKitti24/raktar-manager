@@ -11,7 +11,7 @@ from app.blueprints import role_required
 def index():
     return 'This is The Orders Blueprint'
 
-#Megrendelések listázása
+#Megrendelések listázása  ✔
 @bp.get('/get-orders')
 @bp.doc(tags=["orders"])
 @bp.auth_required(auth)

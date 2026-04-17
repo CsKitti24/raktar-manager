@@ -17,13 +17,13 @@ class OrderService:
     def get_orders(current_user):
         try:
             user_id = current_user.get("user_id")
-
-            roles_data = current_user.get("roles", [])
-            user_roles = [r.get("name") for r in roles_data if isinstance(r, dict)]
-
+            user_roles = []
+            for role in current_user.get("roles"):
+                user_roles.append(role)
+  
             stmt = select(Order)
 
-            if 'Admin' not in user_roles or 'Warehouseman' not in user_roles:
+            if 'Admin' not in user_roles and 'Warehouse' not in user_roles:
                 filters = []
                 if 'Orderer' in user_roles:
                     filters.append(Order.orderer_id == user_id)
@@ -31,12 +31,11 @@ class OrderService:
                     filters.append(Order.supplier_id == user_id)
                 if 'Carrier' in user_roles:
                     filters.append(Order.carrier_id == user_id)
-                
+
                 if filters:
                     stmt = stmt.filter(or_(*filters))
-
                 else:
-                    return False, "Access denied."
+                    return False, "Access denied. Nincs megfelelő jogosultságod a rendelések megtekintéséhez."
 
             orders = db.session.execute(stmt).scalars().all()
             return True, orders
@@ -48,8 +47,10 @@ class OrderService:
     def get_order_by_id(order_id, current_user):
         try:
             user_id = current_user.get("user_id")
-            roles_data = current_user.get("roles", [])
-            user_roles = [r.get("name") for r in roles_data if isinstance(r, dict)]
+            user_roles = []
+            for role in current_user.get("roles"):
+                user_roles.append(role)
+           
 
             order = db.session.execute(select(Order).filter_by(id=order_id)).scalar_one_or_none()
             if not order:
