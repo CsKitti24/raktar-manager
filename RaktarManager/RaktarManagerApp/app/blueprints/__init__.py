@@ -30,16 +30,17 @@ def role_required(roles):
     def wrapper(fn):
         @wraps(fn)
         def decorated_function(*args, **kwargs):
-            roles_data = auth.current_user.get("roles") or []
-            user_roles = [r.get("rolename") for r in roles_data if isinstance(r, dict) and r.get("rolename")]
+            user_roles = [item.get("rolename") if isinstance(item, dict) else item for item in auth.current_user.get("roles", [])]
+            
+            #teszteléshez
+            print(f"DEBUG: Elvárt: {roles}, User roles: {user_roles}")
+            
+            for role in roles:
+                if role in user_roles:
+                    return fn(*args, **kwargs)
 
-            #Csak teszteleshez van itt
-            print(f"DEBUG: Elvárt: {roles}, User roles: {auth.current_user.get('roles')}")
-
-            has_permission = any(role in user_roles for role in roles)
-            if has_permission:
-                return fn(*args, **kwargs)       
-            raise HTTPError(message="Access denied", status_code=403)
+            raise HTTPError(message="Access denied.", status_code=403)
+            
         return decorated_function
     return wrapper
 
@@ -61,3 +62,6 @@ bp.register_blueprint(bp_dashboard, url_prefix='/dashboard')
 
 from app.blueprints.complaints import bp as bp_complaints
 bp.register_blueprint(bp_complaints, url_prefix='/complaints')
+
+from app.blueprints.authe import bp as bp_authe
+bp.register_blueprint(bp_authe, url_prefix='/auth')
