@@ -8,16 +8,13 @@ class AddressService:
 
     @staticmethod
     def create(u_id, data):
-        #berakjuk a "kosarba"
         new_address = Address(**data, user_id=u_id)
         db.session.add(new_address)
-        #veglegesitjuk az adatbazisban
         db.session.commit()
         return new_address
 
     @staticmethod
     def update(u_id, addr_id, data):
-        #csak a sajat cimet modosithatja
         addr = Address.query.filter_by(id=addr_id, user_id=u_id).first()
         if not addr:
             return None

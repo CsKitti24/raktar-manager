@@ -9,21 +9,21 @@ from app.blueprints.address.service import AddressService
 def index():
     return 'This is The Address Blueprint'
 
-@bp.get('/')
-@auth.login_required
+@bp.get('/get')
+@bp.auth_required(auth)
 @bp.output(AddressSchema(many=True))
 def get_my_addresses():
     return AddressService.get_by_user(auth.current_user['user_id'])
 
-@bp.post('/')
-@auth.login_required
+@bp.post('/add')
+@bp.auth_required(auth)
 @bp.input(AddressSchema)
 @bp.output(AddressSchema)
 def add_address(json_data):
     return AddressService.create(auth.current_user['user_id'], json_data)
 
 @bp.put('/<int:id>')
-@auth.login_required
+@bp.auth_required(auth)
 @bp.input(AddressUpdateSchema)
 @bp.output(AddressSchema)
 def update_address(id, json_data):
@@ -33,7 +33,7 @@ def update_address(id, json_data):
     return res
 
 @bp.delete('/<int:id>')
-@auth.login_required
+@bp.auth_required(auth)
 def delete_address(id):
     if AddressService.delete(auth.current_user['user_id'], id):
         return {"message": "Cím sikeresen törölve"}, 200

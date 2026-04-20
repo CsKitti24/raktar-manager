@@ -10,13 +10,15 @@ from app.blueprints.user.service import UserService
 def index():
     return 'This is The User Blueprint'
 
-@bp.get('/')
+@bp.get('/get')
+@bp.auth_required(auth)
 @role_required(['Admin'])
 @bp.output(UserDetailResponseSchema(many=True))
 def get_users():
     return UserService.get_all()
 
 @bp.put('/<int:id>/roles')
+@bp.auth_required(auth)
 @role_required(['Admin'])
 @bp.input(RoleUpdateSchema)
 def update_roles(id, json_data):
@@ -25,13 +27,19 @@ def update_roles(id, json_data):
     raise HTTPError(404, res)
 
 @bp.delete('/<int:id>')
+@bp.auth_required(auth)
 @role_required(['Admin'])
 def deactivate_user(id):
     if UserService.deactivate(id): return {"message": "User deactivated"}
     raise HTTPError(404, "User not found")
 
 @bp.put('/me/profile')
-@auth.login_required
+@bp.auth_required(auth)
 @bp.input(UserProfileUpdateSchema)
 def update_my_profile(json_data):
-    pass
+    user_id = auth.current_user.get("id") or auth.current_user.get("user_id")
+    success, res = UserService.update_profile(user_id, json_data)
+    if success: 
+        return {"message": "Profil sikeresen frissítve!"}, 200
+    
+    raise HTTPError(400, res)

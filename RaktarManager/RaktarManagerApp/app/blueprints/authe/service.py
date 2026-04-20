@@ -14,7 +14,6 @@ class AuthService:
         password = data.pop('password')
         user = User(**data)
         user.set_password(password)
-        #alapertelmezett customer jogkor, mert kell egy role, hogy hasznalhato legyen
         role = Role.query.filter_by(rolename='customer').first()
         if role: user.roles.append(role)
             
@@ -37,4 +36,4 @@ class AuthService:
             "roles": [r.rolename for r in user.roles],
             "exp": int((datetime.now() + timedelta(hours=8)).timestamp())
         }
-        return jwt.encode({'alg': 'HS256'}, payload, current_app.config['SECRET_KEY']).decode()
+        return jwt.encode({'alg': 'RS256'}, payload, current_app.config['SECRET_KEY']).decode()

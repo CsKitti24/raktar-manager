@@ -26,15 +26,13 @@ def login(json_data):
     raise HTTPError(401, res)
 
 @bp.post('/logout')
-@auth.login_required
+@bp.auth_required(auth)
 def logout():
-    #token feketelista vagy kliens oldali torles
     return {"message": "Sikeres kijelentkezés"}, 200
 
 @bp.get('/me')
-@auth.login_required
+@bp.auth_required(auth)
 def get_me():
-    #aktualis felhasznalo lekerdezese
     from app.models.user import User
     user = User.query.get(auth.current_user['user_id'])
     return {"id": user.id, "username": user.username, "roles": [r.rolename for r in user.roles]}

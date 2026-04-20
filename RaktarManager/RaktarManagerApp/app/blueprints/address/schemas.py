@@ -9,7 +9,6 @@ class AddressSchema(Schema):
     street = String(required=True)
     postal_code = String(required=True)
 
-#frissiteshez, ahol nem kotelezo minden mezo
 class AddressUpdateSchema(Schema):
     country = String()
     city = String()

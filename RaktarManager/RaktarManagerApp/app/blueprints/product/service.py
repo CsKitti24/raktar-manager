@@ -3,7 +3,7 @@ from app.models.category import Category
 from app.extensions import db
 
 class ProductService:
-    #kategoria muveletek
+    #kategoria
     @staticmethod
     def get_all_categories():
         return Category.query.all()
@@ -11,11 +11,11 @@ class ProductService:
     @staticmethod
     def create_category(data):
         new_cat = Category(**data)
-        db.session.add(new_cat) #kosarba
-        db.session.commit() #mentes
+        db.session.add(new_cat) 
+        db.session.commit() 
         return new_cat
 
-    #termék muveletek
+    #termek 
     @staticmethod
     def get_products(category_id=None):
         query = Product.query.filter_by(is_active=True)
