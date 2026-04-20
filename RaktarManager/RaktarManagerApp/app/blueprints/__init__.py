@@ -48,6 +48,15 @@ def role_required(roles):
 from app.blueprints.user import bp as bp_user
 bp.register_blueprint(bp_user, url_prefix='/user')
 
+from app.blueprints.address import bp as bp_address
+bp.register_blueprint(bp_address, url_prefix='/address')
+
+from app.blueprints.product import bp as bp_product
+bp.register_blueprint(bp_product, url_prefix='/product')
+
+from app.blueprints.authe import bp as bp_authe
+bp.register_blueprint(bp_authe, url_prefix='/auth')
+
 from app.blueprints.orders import bp as bp_orders
 bp.register_blueprint(bp_orders, url_prefix='/orders')
 
