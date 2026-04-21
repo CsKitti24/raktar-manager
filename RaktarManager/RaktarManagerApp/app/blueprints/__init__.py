@@ -71,6 +71,3 @@ bp.register_blueprint(bp_dashboard, url_prefix='/dashboard')
 
 from app.blueprints.complaints import bp as bp_complaints
 bp.register_blueprint(bp_complaints, url_prefix='/complaints')
-
-from app.blueprints.authe import bp as bp_authe
-bp.register_blueprint(bp_authe, url_prefix='/auth')
