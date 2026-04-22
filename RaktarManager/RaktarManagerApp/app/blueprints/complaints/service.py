@@ -7,7 +7,7 @@ import traceback
 
 class ComplaintService:
 
-    #Reklam·ciÛk list·z·sa
+    #Reklam√°ci√≥k list√°z√°sa
     @staticmethod
     def get_all_complaints(current_user):
         try:
@@ -29,7 +29,7 @@ class ComplaintService:
             traceback.print_exc()
             return False, "Incorrect query data!"
 
-    #Reklam·ciÛ rÈszletei
+    #Reklam√°ci√≥ r√©szletei
     @staticmethod
     def get_complaint_by_id(complaint_id, current_user):
         try:
@@ -39,9 +39,9 @@ class ComplaintService:
 
             complaint = db.session.execute(select(Complaint).filter_by(id=complaint_id)).scalar_one_or_none()
             if not complaint:
-                return False, "Complaint not found!"
+                return False, "A panasz nem tal√°lhat√≥!"
 
-            #Csak a saj·tj·t l·thatja, kivÈve ha Admin
+            #Csak a saj√°tj√°t l√°thatja, kiv√©ve ha Admin
             if complaint.user_id != user_id and 'Admin' not in user_roles:
                 return False, "Access denied."
 
@@ -50,7 +50,7 @@ class ComplaintService:
             traceback.print_exc()
             return False, "Incorrect query data!"
 
-    #Reklam·ciÛ lÈtrehoz·sa
+    #Reklam√°ci√≥ l√©trehoz√°sa
     @staticmethod
     def create_complaint(request, user_id):
         try:
@@ -60,10 +60,10 @@ class ComplaintService:
                 return False, "Order not found!"
             
             if order.orderer_id != user_id:
-                return False, "You can only complain about your own orders!"
+                return False, "Csak a saj√°t rendel√©sedhez adhatsz le panaszt!"
                 
             if order.status.lower() != 'kiszallitva':
-                return False, "Complaints can only be submitted for delivered ('kiszallitva') orders!"
+                return False, "Csak (kiszallitva) √°llapot√∫ rendel√©sre lehet panaszt leadni!"
 
             now = datetime.now()
             
@@ -85,13 +85,13 @@ class ComplaintService:
             traceback.print_exc()
             return False, "Incorrect Complaint data!"
 
-    #Reklam·ciÛ kezelÈse
+    #Reklam√°ci√≥ kezel√©se
     @staticmethod
     def update_complaint(complaint_id, request):
         try:
             complaint = db.session.execute(select(Complaint).filter_by(id=complaint_id)).scalar_one_or_none()
             if not complaint:
-                return False, "Complaint not found!"
+                return False, "A panasz nem tal√°lhat√≥!"
 
             complaint.status = request['status']
             

@@ -35,7 +35,7 @@ class OrderService:
                 if filters:
                     stmt = stmt.filter(or_(*filters))
                 else:
-                    return False, "Access denied. Nincs megfelelő jogosultságod a rendelések megtekintéséhez."
+                    return False, "Access denied."
 
             orders = db.session.execute(stmt).scalars().all()
             return True, orders
@@ -54,7 +54,7 @@ class OrderService:
 
             order = db.session.execute(select(Order).filter_by(id=order_id)).scalar_one_or_none()
             if not order:
-                return False, "Order not found!"
+                return False, "Rendelés nem található!"
 
             if user_id not in [order.orderer_id, order.supplier_id, order.carrier_id] and 'Admin' not in user_roles and 'Warehouseman' not in user_roles:
                 return False, "Access denied."
@@ -116,16 +116,16 @@ class OrderService:
         try:
             order = db.session.execute(select(Order).filter_by(id=order_id)).scalar_one_or_none()
             if not order:
-                return False, "Order not found!"
+                return False, "Rendelés nem található!"
             
             if order.orderer_id != user_id:
-                return False, "Only your own order can be modified!"
+                return False, "Csak a saját rendelésedet módosíthatod"
             
             if order.is_locked == 1 or (order.locked_at and datetime.now() > order.locked_at):
                 if order.is_locked == 0:
                     order.is_locked = 1
                     db.session.commit()
-                return False, "Order is locked (24h passed)!"
+                return False, "A rendelés le lett zárva (24 óra eltelt)!"
 
             if 'address_id' in request:
                 order.address_id = request['address_id']
@@ -169,7 +169,7 @@ class OrderService:
         try:
             order = db.session.execute(select(Order).filter_by(id=order_id)).scalar_one_or_none()
             if not order:
-                return False, "Order not found!"
+                return False, "A rendelés nem található!"
 
             order.status = request['status']
             order.updated_at = datetime.now()
@@ -186,7 +186,7 @@ class OrderService:
         try:
             order = db.session.execute(select(Order).filter_by(id=order_id)).scalar_one_or_none()
             if not order:
-                return False, "Order not found!"
+                return False, "A rendelés nem található!"
 
             if role_type == 'Supplier':
                 order.supplier_id = target_id
@@ -200,4 +200,4 @@ class OrderService:
         except Exception as ex:
             db.session.rollback()
             traceback.print_exc()
-            return False, f"Incorrect Assignment data: {str(ex)}!"
+            return False, f"Hibás adat: {str(ex)}!"

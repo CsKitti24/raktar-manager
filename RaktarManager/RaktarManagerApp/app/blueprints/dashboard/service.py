@@ -17,9 +17,6 @@ class DashboardService:
             user_roles = []
             for role in current_user.get("roles"):
                 user_roles.append(role)
-            #user_roles = [item.get("rolename") if isinstance(item, dict) else item for item in roles_data]
-
-            print(f"DEBUG DASHBOARD -> User ID: {user_id}, Szerepkörök: {user_roles}")
 
             orders_query = select(func.count(Order.id))
             
