@@ -30,8 +30,8 @@ def update_roles(id, json_data):
 @bp.auth_required(auth)
 @role_required(['Admin'])
 def deactivate_user(id):
-    if UserService.deactivate(id): return {"message": "User deactivated"}
-    raise HTTPError(404, "User not found")
+    if UserService.deactivate(id): return {"message": "Felhasználó deaktiválva"}
+    raise HTTPError(404, "Felhasználó nem található")
 
 @bp.put('/me/profile')
 @bp.auth_required(auth)

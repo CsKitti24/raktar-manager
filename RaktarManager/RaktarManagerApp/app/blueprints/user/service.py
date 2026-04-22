@@ -11,7 +11,7 @@ class UserService:
     @staticmethod
     def update_roles(user_id, role_ids):
         user = User.query.get(user_id)
-        if not user: return False, "User not found"
+        if not user: return False, "Felhasználó nem található"
         roles = Role.query.filter(Role.id.in_(role_ids)).all()
         user.roles = roles
         db.session.commit()
