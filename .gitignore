@@ -60,6 +60,9 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+app.db
+*.db
+*.sqlite*
 
 # Flask stuff:
 instance/
@@ -137,6 +140,7 @@ celerybeat.pid
 # Environments
 .env
 .envrc
+*.local
 .venv
 env/
 venv/
@@ -145,6 +149,33 @@ env.bak/
 venv.bak/
 env1/
 env2/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Frontend
+node_modules/
+dist/
+build/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Frontend
+node_modules/
+dist/
+build/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Frontend
+node_modules/
+dist/
+build/
 
 # Spyder project settings
 .spyderproject
@@ -209,3 +240,7 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Markdown files
+*.md
+!README.md

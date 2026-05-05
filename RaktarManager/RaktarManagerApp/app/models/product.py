@@ -16,6 +16,10 @@ class Product(db.Model):
     description: Mapped[str] = mapped_column(String(255))
     sku: Mapped[str] = mapped_column(String(50))
     price: Mapped[float] = mapped_column(Float)
+<<<<<<< HEAD
+=======
+    image_url: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+>>>>>>> kitti-ag
     is_active: Mapped[bool] = mapped_column(default = True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     

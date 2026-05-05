@@ -74,7 +74,16 @@ class OrderService:
             order = Order(
                 order_number=f"ORD-{now.strftime('%Y%m%d')}-{user_id}-{int(now.timestamp())}",
                 orderer_id=user_id,
+<<<<<<< HEAD
                 address_id=request['address_id'],
+=======
+                address_id=request.get('address_id'),
+                billing_address_id=request.get('billing_address_id') or request.get('address_id'),
+                billing_name=request.get('billing_name'),
+                billing_email=request.get('billing_email'),
+                billing_phone=request.get('billing_phone'),
+                payment_method=request.get('payment_method'),
+>>>>>>> kitti-ag
                 comment=request.get('comment'),
                 status='megrendelve',
                 total_amount=0.0,

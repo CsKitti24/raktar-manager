@@ -19,6 +19,14 @@ class Order(db.Model):
     carrier_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True)
     warehouse_user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"), nullable=True)
     address_id: Mapped[int] = mapped_column(ForeignKey("addresses.id"))
+<<<<<<< HEAD
+=======
+    billing_address_id: Mapped[Optional[int]] = mapped_column(ForeignKey("addresses.id"), nullable=True)
+    billing_name: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
+    billing_email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    billing_phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    payment_method: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+>>>>>>> kitti-ag
     status: Mapped[str] = mapped_column(String(50), default="megrendelve")
     comment: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     total_amount: Mapped[Optional[float]] = mapped_column(nullable=True)
@@ -31,6 +39,11 @@ class Order(db.Model):
     supplier: Mapped[Optional["User"]] = relationship(foreign_keys=[supplier_id], back_populates="orders_as_supplier")
     carrier: Mapped[Optional["User"]] = relationship(foreign_keys=[carrier_id], back_populates="orders_as_carrier")
     warehouse_user: Mapped[Optional["User"]] = relationship(foreign_keys=[warehouse_user_id], back_populates="orders_as_warehouse")
+<<<<<<< HEAD
     address: Mapped["Address"] = relationship(back_populates="orders")
+=======
+    address: Mapped["Address"] = relationship(foreign_keys=[address_id], back_populates="orders")
+    billing_address: Mapped[Optional["Address"]] = relationship(foreign_keys=[billing_address_id])
+>>>>>>> kitti-ag
     items: Mapped[List["OrderItem"]] = relationship(back_populates="order")
     complaints: Mapped[List["Complaint"]] = relationship(back_populates="order")

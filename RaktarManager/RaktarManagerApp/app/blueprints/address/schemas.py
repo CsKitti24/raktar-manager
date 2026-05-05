@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from marshmallow import Schema
+=======
+from apiflask import Schema
+>>>>>>> kitti-ag
 from apiflask.fields import String, Integer
 
 class AddressSchema(Schema):

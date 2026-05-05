@@ -16,4 +16,8 @@ class Address(db.Model):
     postal_code: Mapped[str] = mapped_column(String(20))
 
     user: Mapped["User"] = relationship(back_populates="addresses")
+<<<<<<< HEAD
     orders: Mapped[List["Order"]] = relationship(back_populates="address")
+=======
+    orders: Mapped[List["Order"]] = relationship(back_populates="address", primaryjoin="Address.id == Order.address_id")
+>>>>>>> kitti-ag

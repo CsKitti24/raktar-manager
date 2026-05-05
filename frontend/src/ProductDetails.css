@@ -1,0 +1,132 @@
+.product-details-container {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.back-btn {
+    background: transparent;
+    color: var(--accent);
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    color: var(--accent-hover);
+    transform: translateX(-4px);
+}
+
+.product-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    background-color: var(--bg-card);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 768px) {
+    .product-details-content {
+        flex-direction: row;
+        padding: 3rem;
+    }
+}
+
+.product-details-image {
+    flex: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: var(--bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 500px;
+    border: 1px solid var(--border);
+}
+
+.product-details-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.product-details-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-category {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.product-title {
+    font-size: 2.5rem;
+    color: var(--text-main);
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+}
+
+.product-sku {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0 0 1.5rem 0;
+}
+
+.product-price-large {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 2rem;
+}
+
+.product-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+}
+
+.product-actions {
+    margin-top: auto;
+}
+
+.add-to-cart-large-btn {
+    width: 100%;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-to-cart-large-btn:hover {
+    background-color: var(--accent-hover);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.add-to-cart-large-btn:active {
+    transform: scale(0.98);
+}
