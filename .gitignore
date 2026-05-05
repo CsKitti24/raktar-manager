@@ -166,6 +166,15 @@ node_modules/
 dist/
 build/
 
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Frontend
+node_modules/
+dist/
+build/
+
 # Spyder project settings
 .spyderproject
 .spyproject
