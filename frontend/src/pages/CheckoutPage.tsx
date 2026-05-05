@@ -30,15 +30,6 @@ const CheckoutPage: React.FC = () => {
     comment: ''
   });
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      toast.error('Jelentkezz be a rendelés leadásához!');
-      navigate('/login');
-      return;
-    }
-    fetchUserData();
-  }, [isLoggedIn]);
-
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -47,32 +38,41 @@ const CheckoutPage: React.FC = () => {
       const meRes = await axios.get('/api/auth/me', { headers });
       const userId = meRes.data.id;
       
-      let userData: any = {};
+      let userData: Record<string, unknown> = {};
       try {
         const usersRes = await axios.get('/api/user/get', { headers });
-        userData = usersRes.data.find((u: any) => u.id === userId) || {};
-      } catch (e) {}
+        userData = usersRes.data.find((u: Record<string, unknown>) => u.id === userId) || {};
+      } catch { /* ignore */ }
 
-      let address: any = {};
+      let address: Record<string, unknown> = {};
       try {
         const addrRes = await axios.get('/api/address/get', { headers });
         if (addrRes.data.length > 0) address = addrRes.data[0];
-      } catch (e) {}
+      } catch { /* ignore */ }
 
       setFormData(prev => ({
         ...prev,
-        name: userData.full_name || meRes.data.username || '',
-        email: userData.email || '',
-        phone: userData.phone || '',
-        billingCountry: address.country || 'Magyarország',
-        billingCity: address.city || '',
-        billingPostalCode: address.postal_code || '',
-        billingStreet: address.street || '',
+        name: String(userData.full_name || meRes.data.username || ''),
+        email: String(userData.email || ''),
+        phone: String(userData.phone || ''),
+        billingCountry: String(address.country || 'Magyarország'),
+        billingCity: String(address.city || ''),
+        billingPostalCode: String(address.postal_code || ''),
+        billingStreet: String(address.street || ''),
       }));
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   };
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      toast.error('Jelentkezz be a rendelés leadásához!');
+      navigate('/login');
+      return;
+    }
+    fetchUserData();
+  }, [isLoggedIn, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -131,9 +131,13 @@ const CheckoutPage: React.FC = () => {
       toast.success('Rendelés sikeresen leadva!');
       clearCart();
       navigate('/profile');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Order creation error:', error);
-      const errorDetail = error.response?.data?.detail || error.response?.data?.message || JSON.stringify(error.response?.data);
+      let errorDetail = 'Ismeretlen hiba';
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const data = error.response.data as Record<string, unknown>;
+        errorDetail = String(data.detail || data.message || JSON.stringify(data));
+      }
       toast.error(`Hiba történt: ${errorDetail}`);
     } finally {
       setLoading(false);

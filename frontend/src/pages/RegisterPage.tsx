@@ -21,7 +21,7 @@ const RegisterPage: React.FC = () => {
         setLoading(true);
 
         try {
-            const payload: any = {
+            const payload: Record<string, string> = {
                 username,
                 full_name: fullName,
                 email,
@@ -36,12 +36,11 @@ const RegisterPage: React.FC = () => {
             alert('Sikeres regisztráció! Kérlek jelentkezz be.');
             navigate('/login');
             
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
-            } else if (err.response && err.response.data && err.response.data.msg) {
-                setError(err.response.data.msg); 
+            if (axios.isAxiosError(err) && err.response?.data) {
+                const data = err.response.data as Record<string, string>;
+                setError(data.message || data.msg || 'Hiba történt a regisztráció során.');
             } else {
                 setError('Hiba történt a regisztráció során. Kérlek ellenőrizd az adataidat és a hálózatot!');
             }

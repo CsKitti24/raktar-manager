@@ -4,12 +4,36 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../Profile.css';
 
+interface Address {
+  id: number;
+  country: string;
+  city: string;
+  postal_code: string;
+  street: string;
+}
+
+interface Order {
+  id: number;
+  order_number: string;
+  created_at: string;
+  status: string;
+  total_amount?: number;
+}
+
+interface UserDataApi {
+  id: number;
+  username: string;
+  full_name?: string;
+  email: string;
+  phone?: string;
+}
+
 const ProfilePage: React.FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   
-  const [addresses, setAddresses] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [userData, setUserData] = useState({
     id: 0,
     name: '',
@@ -37,10 +61,6 @@ const ProfilePage: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const fetchProfile = async () => {
     try {
       setLoading(true);
@@ -53,20 +73,20 @@ const ProfilePage: React.FC = () => {
       const userId = meRes.data.id;
 
       // 2. Get user details
-      let meUser = null;
+      let meUser: UserDataApi | null = null;
       try {
         const usersRes = await axios.get('/api/user/get', { headers });
-        meUser = usersRes.data.find((u: any) => u.id === userId);
-      } catch (err) {
+        meUser = usersRes.data.find((u: UserDataApi) => u.id === userId) ?? null;
+      } catch {
         console.warn('Nem sikerült a felhasználói adatokat lekérni (esetleg nincs Admin jogosultságod).');
       }
 
       // 3. Get user addresses
-      let addressList: any[] = [];
+      let addressList: Address[] = [];
       try {
         const addrRes = await axios.get('/api/address/get', { headers });
         addressList = addrRes.data;
-      } catch (err) {
+      } catch {
         console.warn('Nem sikerült a címeket lekérni.');
       }
       setAddresses(addressList);
@@ -76,13 +96,13 @@ const ProfilePage: React.FC = () => {
       try {
         const ordersRes = await axios.get('/api/orders/get-orders', { headers });
         setOrders(ordersRes.data);
-      } catch (err) {
+      } catch {
         console.warn('Nem sikerült a rendeléseket lekérni.');
       }
 
       const profileData = {
-        id: userId,
-        name: meUser ? (meUser.full_name || meUser.username) : meRes.data.username,
+        id: userId as number,
+        name: meUser ? (meUser.full_name || meUser.username) : String(meRes.data.username),
         email: meUser ? meUser.email : 'Ismeretlen (Nincs jogosultság)',
         phone: meUser ? (meUser.phone || '') : '',
         addressId: firstAddress ? firstAddress.id : 0,
@@ -109,6 +129,10 @@ const ProfilePage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const handleSave = async () => {
     try {
@@ -147,9 +171,14 @@ const ProfilePage: React.FC = () => {
       setSuccessMsg('Adatok sikeresen elmentve!');
       setIsEditing(false);
       await fetchProfile(); // Refresh
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.response?.data?.message || 'Hiba történt a mentés során.');
+      if (axios.isAxiosError(err) && err.response?.data) {
+        const data = err.response.data as Record<string, string>;
+        setError(data.message || 'Hiba történt a mentés során.');
+      } else {
+        setError('Hiba történt a mentés során.');
+      }
       setLoading(false);
     }
   };
@@ -334,7 +363,7 @@ const ProfilePage: React.FC = () => {
             <h2>Rendeléseim</h2>
             <div className="orders-list">
               {orders.length > 0 ? (
-                orders.map((order: any) => (
+                orders.map((order) => (
                   <div key={order.id} className="order-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid var(--border)' }}>
                     <div className="order-info" style={{ display: 'flex', flexDirection: 'column' }}>
                       <span className="order-id" style={{ fontWeight: 'bold' }}>#{order.order_number}</span>

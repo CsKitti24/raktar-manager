@@ -37,12 +37,11 @@ const LoginPage: React.FC = () => {
             } else {
                 setError('Sikeres válasz, de nem érkezett token.');
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
-            } else if (err.response && err.response.data && err.response.data.msg) {
-                setError(err.response.data.msg);
+            if (axios.isAxiosError(err) && err.response?.data) {
+                const data = err.response.data as Record<string, string>;
+                setError(data.message || data.msg || 'Hiba történt a bejelentkezés során.');
             } else {
                 setError('Hiba történt a bejelentkezés során. Kérlek ellenőrizd az adataidat és a hálózatot!');
             }

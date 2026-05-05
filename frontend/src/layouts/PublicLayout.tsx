@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 import '../Home.css';
 
 const PublicLayout: React.FC = () => {
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn } = useAuth();
   const { totalItems } = useCart();
   const navigate = useNavigate();
 
