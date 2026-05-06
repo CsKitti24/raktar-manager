@@ -100,6 +100,59 @@ def seed_database():
                 db.session.commit()
 
             # Products
+<<<<<<< HEAD
+            if not Product.query.filter_by(name="Vezeték nélküli fülhallgató").first():
+                db.session.add_all([
+                    Product(category_id=3,
+                           name="Vezeték nélküli fülhallgató", 
+                           description="Zajszűrős Bluetooth fülhallgató.", 
+                           sku="ELEC-WF-001", 
+                           price=25000.00, 
+                           is_active=True, 
+                           created_at=datetime(2026, 3, 1, 10, 15)),
+
+                    Product(category_id=2, 
+                            name="A tiszta kód", 
+                            description="Útmutató agilis szoftverfejlesztőknek.", 
+                            sku="BOOK-CLN-002", 
+                            price=8500.00, 
+                            is_active=True, 
+                            created_at=datetime(2026, 3, 2, 14, 30)),
+
+                    Product(category_id=1, 
+                            name="Eszpresszó Kávéfőző", 
+                            description="Prémium kávéfőző.", 
+                            sku="KITC-COF-003", 
+                            price=45000.00, 
+                            is_active=False, 
+                            created_at=datetime(2026, 3, 3, 9, 0)),
+
+                    Product(category_id=3, 
+                            name="Vízálló Okosóra", 
+                            description="Okosóra pulzusmérővel.", 
+                            sku="ELEC-SMW-004", 
+                            price=55000.00, 
+                            is_active=True, 
+                            created_at=datetime(2026, 3, 4, 8, 45)),
+
+                    Product(category_id=2, 
+                            name="Python Mesterkurzus", 
+                            description="Haladó programozási technikák.", 
+                            sku="BOOK-PYT-005", 
+                            price=12000.00, 
+                            is_active=True, 
+                            created_at=datetime(2026, 2, 28, 16, 20)),
+
+                    Product(category_id=1, 
+                            name="Kétrekeszes Kenyérpirító", 
+                            description="Acél bevonatú pirító.", 
+                            sku="KITC-TOA-006", 
+                            price=14500.00, 
+                            is_active=True, 
+                            created_at=datetime(2026, 3, 4, 11, 10))
+                ])
+                db.session.commit()
+=======
             # Products
             product_data = [
                 {
@@ -177,6 +230,7 @@ def seed_database():
                     db.session.add(Product(**p_info))
             
             db.session.commit()
+>>>>>>> kitti-ag
 
             # Storage
             if not StorageLocation.query.filter_by(code="A-01").first():
@@ -219,8 +273,13 @@ def seed_database():
             # Order Items
             order = Order.query.filter_by(order_number="ORD-2026-001").first()
             if order:
+<<<<<<< HEAD
+                product1 = Product.query.filter_by(name="Vezeték nélküli fülhallgató").first()
+                product2 = Product.query.filter_by(name="A tiszta kód").first()
+=======
                 product1 = Product.query.filter_by(sku="ELEC-WF-001").first()
                 product2 = Product.query.filter_by(sku="BOOK-CLN-002").first()
+>>>>>>> kitti-ag
             
                 if product1 and product2 and not OrderItem.query.filter_by(order_id=order.id).first():
                     item1 = OrderItem(order_id=order.id, 
