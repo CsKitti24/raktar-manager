@@ -1,1 +1,12 @@
-import app.models.user
+from app.models.user import User
+from app.models.role import Role
+from app.models.address import Address
+from app.models.category import Category
+from app.models.product import Product
+from app.models.user_role import UserRole
+from app.models.order import Order
+from app.models.order_item import OrderItem
+from app.models.complaint import Complaint
+from app.models.storage import StorageLocation
+from app.models.inventory import Inventory
+from app.models.inventory_log import InventoryLog

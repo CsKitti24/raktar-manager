@@ -1,0 +1,7 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/RaktarManager/RaktarManagerApp/venv/Scripts/python.exe",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/RaktarManager/RaktarManagerApp"
+    ],
+    "python.analysis.autoSearchPaths": true
+}
