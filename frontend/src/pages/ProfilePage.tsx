@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../Profile.css';
@@ -61,6 +61,12 @@ const ProfilePage: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  const [complaintModalOpen, setComplaintModalOpen] = useState(false);
+  const [complaintOrderId, setComplaintOrderId] = useState<number | null>(null);
+  const [complaintForm, setComplaintForm] = useState({ description: '' });
+  const [complaintFile, setComplaintFile] = useState<File | null>(null);
+  const [complaintLoading, setComplaintLoading] = useState(false);
+
   const fetchProfile = async () => {
     try {
       setLoading(true);
@@ -69,13 +75,13 @@ const ProfilePage: React.FC = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       // 1. Get current user ID
-      const meRes = await axios.get('/api/auth/me', { headers });
+      const meRes = await api.get('/auth/me');
       const userId = meRes.data.id;
 
       // 2. Get user details
       let meUser: UserDataApi | null = null;
       try {
-        const usersRes = await axios.get('/api/user/get', { headers });
+        const usersRes = await api.get('/user/get');
         meUser = usersRes.data.find((u: UserDataApi) => u.id === userId) ?? null;
       } catch {
         console.warn('Nem sikerült a felhasználói adatokat lekérni (esetleg nincs Admin jogosultságod).');
@@ -84,7 +90,7 @@ const ProfilePage: React.FC = () => {
       // 3. Get user addresses
       let addressList: Address[] = [];
       try {
-        const addrRes = await axios.get('/api/address/get', { headers });
+        const addrRes = await api.get('/address/get');
         addressList = addrRes.data;
       } catch {
         console.warn('Nem sikerült a címeket lekérni.');
@@ -94,7 +100,7 @@ const ProfilePage: React.FC = () => {
 
       // 4. Get user orders
       try {
-        const ordersRes = await axios.get('/api/orders/get-orders', { headers });
+        const ordersRes = await api.get('/orders/get-orders');
         setOrders(ordersRes.data);
       } catch {
         console.warn('Nem sikerült a rendeléseket lekérni.');
@@ -144,28 +150,28 @@ const ProfilePage: React.FC = () => {
 
       // Update User Profile (email, phone)
       if (editForm.email !== 'Ismeretlen (Nincs jogosultság)') {
-        await axios.put('/api/user/me/profile', {
+        await api.put('/user/me/profile', {
           email: editForm.email,
           phone: editForm.phone
-        }, { headers });
+        });
       }
 
       // Update Address
       if (userData.addressId > 0) {
-        await axios.put(`/api/address/${userData.addressId}`, {
+        await api.put(`/address/${userData.addressId}`, {
           country: editForm.country,
           city: editForm.city,
           postal_code: editForm.postal_code,
           street: editForm.street
-        }, { headers });
+        });
       } else if (editForm.city || editForm.street) {
         // Create new address
-        await axios.post('/api/address/add', {
+        await api.post('/address/add', {
           country: editForm.country || 'Magyarország',
           city: editForm.city,
           postal_code: editForm.postal_code,
           street: editForm.street
-        }, { headers });
+        });
       }
 
       setSuccessMsg('Adatok sikeresen elmentve!');
@@ -173,12 +179,7 @@ const ProfilePage: React.FC = () => {
       await fetchProfile(); // Refresh
     } catch (err: unknown) {
       console.error(err);
-      if (axios.isAxiosError(err) && err.response?.data) {
-        const data = err.response.data as Record<string, string>;
-        setError(data.message || 'Hiba történt a mentés során.');
-      } else {
-        setError('Hiba történt a mentés során.');
-      }
+      setError('Hiba történt a mentés során.');
       setLoading(false);
     }
   };
@@ -186,6 +187,52 @@ const ProfilePage: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleOpenComplaint = (orderId: number) => {
+    setComplaintOrderId(orderId);
+    setComplaintModalOpen(true);
+    setComplaintForm({ description: '' });
+    setComplaintFile(null);
+  };
+
+  const handleSubmitComplaint = async () => {
+    if (!complaintForm.description.trim()) {
+      setError('A leírás megadása kötelező.');
+      return;
+    }
+    try {
+      setComplaintLoading(true);
+      setError('');
+      setSuccessMsg('');
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+
+      let uploadedFileName = null;
+
+      if (complaintFile) {
+        const formData = new FormData();
+        formData.append('image', complaintFile);
+        const uploadRes = await api.post('/complaints/upload-image', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        uploadedFileName = uploadRes.data.file_name;
+      }
+
+      await api.post('/complaints/create', {
+        order_id: complaintOrderId,
+        description: complaintForm.description,
+        file_name: uploadedFileName
+      });
+
+      setSuccessMsg('Reklamáció sikeresen elküldve!');
+      setComplaintModalOpen(false);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || 'Hiba történt a reklamáció küldésekor.');
+    } finally {
+      setComplaintLoading(false);
+    }
   };
 
   if (loading && !userData.id) return <div className="profile-container"><div style={{ padding: '40px', textAlign: 'center' }}>Betöltés...</div></div>;
@@ -375,6 +422,13 @@ const ProfilePage: React.FC = () => {
                     <div className="order-total" style={{ alignSelf: 'center', fontWeight: 'bold' }}>
                       {order.total_amount ? `${order.total_amount.toLocaleString('hu-HU')} Ft` : 'N/A'}
                     </div>
+                       <button
+                         className="edit-btn"
+                         style={{ alignSelf: 'center', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', width: 'auto', padding: '0.4rem 1rem', fontSize: '0.9rem', marginLeft: '10px' }}
+                         onClick={() => handleOpenComplaint(order.id)}
+                       >
+                         Reklamáció
+                       </button>
                   </div>
                 ))
               ) : (
@@ -395,6 +449,58 @@ const ProfilePage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {complaintModalOpen && (
+        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(5px)' }}>
+          <div className="modal-content profile-card" style={{ maxWidth: '500px', width: '90%', padding: '30px', position: 'relative' }}>
+            <button 
+              onClick={() => setComplaintModalOpen(false)}
+              style={{ position: 'absolute', top: '15px', right: '15px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.5rem' }}
+            >&times;</button>
+            <h2 style={{ marginBottom: '20px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>Reklamáció indítása</h2>
+            
+            <div className="detail-group" style={{ marginBottom: '15px' }}>
+              <label>Probléma leírása</label>
+              <textarea 
+                className="profile-input" 
+                rows={4} 
+                placeholder="Kérlek írd le részletesen, mi a probléma a termékkel..."
+                value={complaintForm.description}
+                onChange={e => setComplaintForm({...complaintForm, description: e.target.value})}
+                style={{ resize: 'vertical' }}
+              />
+            </div>
+
+            <div className="detail-group" style={{ marginBottom: '25px' }}>
+              <label>Kép csatolása (Opcionális)</label>
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={e => setComplaintFile(e.target.files && e.target.files.length > 0 ? e.target.files[0] : null)}
+                className="profile-input"
+                style={{ padding: '0.5rem' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button 
+                className="edit-btn" 
+                style={{ backgroundColor: '#555', width: 'auto', padding: '0.6rem 1.5rem' }}
+                onClick={() => setComplaintModalOpen(false)}
+              >Mégse</button>
+              <button 
+                className="edit-btn" 
+                style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', width: 'auto', padding: '0.6rem 1.5rem' }}
+                onClick={handleSubmitComplaint}
+                disabled={complaintLoading}
+              >
+                {complaintLoading ? 'Küldés...' : 'Panasz benyújtása'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

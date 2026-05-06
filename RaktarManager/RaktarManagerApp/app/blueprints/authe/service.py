@@ -14,7 +14,7 @@ class AuthService:
         password = data.pop('password')
         user = User(**data)
         user.set_password(password)
-        role = Role.query.filter_by(rolename='customer').first()
+        role = Role.query.filter_by(rolename='Orderer').first()
         if role: user.roles.append(role)
             
         db.session.add(user)
