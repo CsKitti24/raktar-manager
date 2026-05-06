@@ -13,10 +13,7 @@ class ProductSchema(Schema):
     description = String()
     sku = String(required=True)
     price = Float(required=True)
-<<<<<<< HEAD
-=======
     image_url = String()
->>>>>>> kitti-ag
     is_active = Boolean(dump_only=True)
 
 class ProductUpdateSchema(Schema):
