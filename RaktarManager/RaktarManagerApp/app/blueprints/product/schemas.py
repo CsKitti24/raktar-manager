@@ -1,5 +1,5 @@
 from marshmallow import Schema
-from apiflask.fields import String, Integer, Float, Boolean, List, Nested
+from apiflask.fields import String, Integer, Float, Boolean
 
 class CategorySchema(Schema):
     id = Integer(dump_only=True)
@@ -13,7 +13,10 @@ class ProductSchema(Schema):
     description = String()
     sku = String(required=True)
     price = Float(required=True)
+<<<<<<< HEAD
     image_url = String()
+=======
+>>>>>>> kata-ag
     is_active = Boolean(dump_only=True)
 
 class ProductUpdateSchema(Schema):

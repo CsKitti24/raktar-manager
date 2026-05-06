@@ -27,8 +27,8 @@ def seed_database():
         
 
         try:
-            #db.drop_all()
-            #db.create_all()
+            db.drop_all()
+            db.create_all()
 
             # Role
             if not Role.query.filter_by(rolename="Admin").first():

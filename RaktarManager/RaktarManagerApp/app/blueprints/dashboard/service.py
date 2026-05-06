@@ -20,7 +20,7 @@ class DashboardService:
 
             orders_query = select(func.count(Order.id))
             
-            if 'Admin' not in user_roles and 'Warehouse' not in user_roles:
+            if 'Admin' not in user_roles and 'Warehouseman' not in user_roles:
                 filters = []
                 if 'Orderer' in user_roles: filters.append(Order.orderer_id == user_id)
                 if 'Supplier' in user_roles: filters.append(Order.supplier_id == user_id)
@@ -48,7 +48,7 @@ class DashboardService:
             low_stock_items = 0
             active_storage_locations = 0
 
-            if 'Admin' in user_roles or 'Warehouse' in user_roles:
+            if 'Admin' in user_roles or 'Warehouseman' in user_roles:
                
                 low_stock_items = db.session.scalar(
                     select(func.count(Inventory.id)).filter(Inventory.quantity <= 5)

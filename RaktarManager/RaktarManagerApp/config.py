@@ -12,7 +12,7 @@ def load_private_key():
         return f.read()
 
 class Config:
-    SECRET_KEY = load_private_key()
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'egy-nagyon-titkos-kulcs-a-raktarhoz'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI')\
         or 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

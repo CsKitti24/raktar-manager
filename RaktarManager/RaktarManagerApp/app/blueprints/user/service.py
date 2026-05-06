@@ -1,12 +1,19 @@
-﻿from app.models.user import User
+from app.models.user import User
 from app.models.role import Role
 from app.extensions import db
 
 class UserService:
     @staticmethod
     def get_all():
-        users =  User.query.all()
+        users = User.query.all()
         return users
+
+    @staticmethod
+    def get_carriers():
+        carrier_role = Role.query.filter_by(rolename='Carrier').first()
+        if not carrier_role:
+            return []
+        return [u for u in carrier_role.users if u.is_active]
 
     @staticmethod
     def update_roles(user_id, role_ids):
@@ -20,15 +27,13 @@ class UserService:
     @staticmethod
     def update_profile(user_id, data):
         user = User.query.get(user_id)
-        if not user: 
+        if not user:
             return False, "Felhasználó nem található"
         if 'email' in data:
             user.email = data['email']
         if 'phone' in data:
             user.phone = data['phone']
-        from app.extensions import db
         db.session.commit()
-        
         return True, "OK"
 
     @staticmethod

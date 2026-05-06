@@ -1,4 +1,4 @@
-﻿from apiflask import APIBlueprint
+from apiflask import APIBlueprint
 bp = APIBlueprint('main', __name__, tag="main")
 from app.models import *
 from apiflask import HTTPError
@@ -17,13 +17,13 @@ def verify_token(token):
     try:
         data = jwt.decode(
             token.encode('ascii'),
-           
-            current_app.config['SECRET_KEY'],
+            current_app.config['SECRET_KEY']
         )
         if data["exp"] < int(datetime.now().timestamp()):
             return None
         return data
     except Exception as ex:
+        print(f"JWT Error: {ex}")
         return None
 
 def role_required(roles):

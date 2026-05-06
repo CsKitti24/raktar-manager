@@ -1,4 +1,4 @@
-﻿from apiflask import APIBlueprint, HTTPError
+from apiflask import APIBlueprint, HTTPError
 from app.blueprints.user import bp
 from app.extensions import auth
 from app.blueprints import role_required
@@ -16,6 +16,14 @@ def index():
 @bp.output(UserDetailResponseSchema(many=True))
 def get_users():
     return UserService.get_all()
+
+@bp.get('/carriers')
+@bp.doc(tags=['user'])
+@bp.auth_required(auth)
+@bp.output(UserDetailResponseSchema(many=True))
+def get_carriers():
+    return UserService.get_carriers()
+
 
 @bp.put('/<int:id>/roles')
 @bp.auth_required(auth)

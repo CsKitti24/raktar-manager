@@ -1,4 +1,7 @@
-﻿from flask import jsonify
+import os
+import uuid
+from flask import jsonify, request, current_app
+from werkzeug.utils import secure_filename
 from app.blueprints.complaints import bp
 from app.blueprints.complaints.service import ComplaintService
 from apiflask import HTTPError
@@ -45,6 +48,34 @@ def create_complaint(json_data):
     if success:
         return response, 200 
     raise HTTPError(message=response, status_code=400)
+
+# Reklamáció kép feltöltése
+@bp.post('/upload-image')
+@bp.doc(tags=["complaints"])
+@bp.auth_required(auth)
+@role_required(["Orderer"])
+def upload_image():
+    if 'image' not in request.files:
+        raise HTTPError(message="Nincs kép a kérésben", status_code=400)
+    
+    file = request.files['image']
+    if file.filename == '':
+        raise HTTPError(message="Nincs kiválasztva kép", status_code=400)
+    
+    if file:
+        filename = secure_filename(file.filename)
+        # Generate a unique filename to prevent overwriting
+        unique_filename = f"{uuid.uuid4()}_{filename}"
+        
+        # Ensure upload directory exists
+        upload_folder = os.path.join(current_app.root_path, 'uploads', 'complaints')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        file_path = os.path.join(upload_folder, unique_filename)
+        file.save(file_path)
+        
+        # Return the relative path or filename
+        return {"file_name": unique_filename}, 200
 
 #Reklamáció kezelése    ✔
 @bp.put('/<int:complaint_id>/update')

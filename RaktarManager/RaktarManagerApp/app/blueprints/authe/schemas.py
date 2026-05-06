@@ -1,15 +1,15 @@
 from marshmallow import Schema, fields
 from apiflask.fields import String, Email, Integer
-from apiflask.validators import Email
+from apiflask.validators import Email as EmailValidator
 
 class UserLoginSchema(Schema):
-    email = String(required=True, validate=Email())
+    email = String(required=True, validate=EmailValidator())
     password = String(required=True)
 
 class RegisterRequestSchema(Schema):
     username = String(required=True)
     full_name = String(required=True)
-    email = String(required=True, validate=Email())
+    email = String(required=True, validate=EmailValidator())
     password = String(required=True)
     phone = String()
 

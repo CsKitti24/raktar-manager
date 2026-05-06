@@ -61,10 +61,6 @@ class ComplaintService:
             
             if order.orderer_id != user_id:
                 return False, "Csak a saját rendelésedhez adhatsz le panaszt!"
-                
-            if order.status.lower() != 'kiszallitva':
-                return False, "Csak (kiszallitva) állapotú rendelésre lehet panaszt leadni!"
-
             now = datetime.now()
             
             complaint = Complaint(
