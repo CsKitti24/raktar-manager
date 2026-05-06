@@ -185,6 +185,40 @@ class OrderService:
             traceback.print_exc()
             return False, f"Hiba módosítás közben: {str(ex)}"
 
+    #Beszállítói űrlap beküldése
+    @staticmethod
+    def submit_supplier_form(order_id, request, current_user):
+        try:
+            user_id = current_user.get("user_id")
+            user_roles = current_user.get("roles", [])
+
+            order = db.session.execute(select(Order).filter_by(id=order_id)).scalar_one_or_none()
+            if not order:
+                return False, "A rendelés nem található!"
+
+            if order.supplier_id != user_id and 'Admin' not in user_roles:
+                return False, "Csak a saját megrendeléseidet szerkesztheted!"
+
+            order.estimated_delivery_at = request.get('estimated_delivery_at')
+            order.supplier_notes = request.get('supplier_notes')
+            order.status = 'szállítás alatt'
+            order.updated_at = datetime.now()
+
+            # Frissítjük a tételeket
+            items_data = request.get('items', [])
+            item_map = {item['id']: item['supplied_quantity'] for item in items_data}
+
+            for order_item in order.items:
+                if order_item.id in item_map:
+                    order_item.supplied_quantity = item_map[order_item.id]
+
+            db.session.commit()
+            return True, order
+        except Exception as ex:
+            db.session.rollback()
+            traceback.print_exc()
+            return False, f"Hiba a beszállítói űrlap mentése közben: {str(ex)}"
+
     #Felhasználó hozzárendelése
     @staticmethod
     def assign_user(order_id, target_id, role_type, warehouse_id):

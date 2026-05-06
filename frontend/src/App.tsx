@@ -32,6 +32,9 @@ import WarehouseStoragePage from './pages/warehouse/WarehouseStoragePage';
 // Carrier pages
 import CarrierOrdersPage from './pages/carrier/CarrierOrdersPage';
 
+// Supplier pages
+import SupplierOrdersPage from './pages/supplier/SupplierOrdersPage';
+
 import './index.css';
 
 // ── Protected route (requires login) ──────────────────────
@@ -117,12 +120,24 @@ function App() {
             <Route
               path="/carrier"
               element={
-                <RoleProtectedRoute roles={['Carrier']}>
+                <RoleProtectedRoute roles={['Carrier', 'Admin']}>
                   <DashboardLayout />
                 </RoleProtectedRoute>
               }
             >
               <Route index element={<CarrierOrdersPage />} />
+            </Route>
+
+            {/* ── Supplier routes ── */}
+            <Route
+              path="/supplier"
+              element={
+                <RoleProtectedRoute roles={['Supplier', 'Admin']}>
+                  <DashboardLayout />
+                </RoleProtectedRoute>
+              }
+            >
+              <Route index element={<SupplierOrdersPage />} />
             </Route>
 
             {/* ── Catch-all ── */}

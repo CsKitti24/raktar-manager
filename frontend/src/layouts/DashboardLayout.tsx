@@ -25,6 +25,10 @@ const CARRIER_MENU = [
   { path: '/carrier', label: 'Fuvarjaim', icon: '🚚', exact: true },
 ];
 
+const SUPPLIER_MENU = [
+  { path: '/supplier', label: 'Beszállítói feladatok', icon: '📦', exact: true },
+];
+
 const DashboardLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const { totalItems } = useCart();
@@ -36,13 +40,17 @@ const DashboardLayout: React.FC = () => {
   const isAdmin = user?.roles.includes('Admin');
   const isWarehouseman = user?.roles.includes('Warehouseman');
   const isCarrier = user?.roles.includes('Carrier');
+  const isSupplier = user?.roles.includes('Supplier');
 
   // If on /warehouse path, show warehouse menu; if /carrier show carrier menu; otherwise admin menu
   const isWarehousePath = window.location.pathname.startsWith('/warehouse');
   const isCarrierPath = window.location.pathname.startsWith('/carrier');
+  const isSupplierPath = window.location.pathname.startsWith('/supplier');
 
   let menuItems = ADMIN_MENU;
-  if (isCarrierPath || (!isAdmin && !isWarehouseman && isCarrier)) {
+  if (isSupplierPath || (!isAdmin && !isWarehouseman && !isCarrier && isSupplier)) {
+    menuItems = SUPPLIER_MENU;
+  } else if (isCarrierPath || (!isAdmin && !isWarehouseman && isCarrier)) {
     menuItems = CARRIER_MENU;
   } else if (isWarehousePath || (!isAdmin && isWarehouseman)) {
     menuItems = WAREHOUSE_MENU;
@@ -98,8 +106,8 @@ const DashboardLayout: React.FC = () => {
         </div>
 
         <div className="header-right">
-          {/* Cart icon – only visible for non-warehouse and non-carrier roles */}
-          {(!isWarehouseman && !isCarrier) && (
+          {/* Cart icon – only visible for non-warehouse, non-carrier, and non-supplier roles */}
+          {(!isWarehouseman && !isCarrier && !isSupplier) && (
             <button className="header-icon-btn" aria-label="Kosár" onClick={() => navigate('/checkout')}>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>

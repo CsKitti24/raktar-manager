@@ -40,6 +40,8 @@ const LoginPage: React.FC = () => {
         navigate('/warehouse');
       } else if (roles.includes('Carrier')) {
         navigate('/carrier');
+      } else if (roles.includes('Supplier')) {
+        navigate('/supplier');
       } else {
         navigate('/');
       }

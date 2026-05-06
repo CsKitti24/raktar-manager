@@ -1,7 +1,7 @@
-﻿from flask import jsonify
+from flask import jsonify
 from app.blueprints.orders import bp
 from apiflask import HTTPError
-from app.blueprints.orders.schemas import OrderRequestSchema, OrderResponseSchema, OrderUpdateRequestSchema,OrderStatusRequestSchema, OrderAssignUserSchema, OrderAssignLocationSchema
+from app.blueprints.orders.schemas import OrderRequestSchema, OrderResponseSchema, OrderUpdateRequestSchema,OrderStatusRequestSchema, OrderAssignUserSchema, OrderAssignLocationSchema, SupplierFormRequestSchema
 from app.blueprints.orders.service import OrderService
 from app.extensions import auth
 from app.blueprints import role_required
@@ -94,6 +94,19 @@ def assign_supplier(order_id, json_data):
 @bp.output(OrderResponseSchema)
 def assign_carrier(order_id, json_data):
     success, response = OrderService.assign_user(order_id, json_data['user_id'], 'Carrier', auth.current_user.get("user_id"))
+    if success:
+        return response, 200
+    raise HTTPError(message=response, status_code=400)
+
+#Beszállítói űrlap beküldése
+@bp.put('/<int:order_id>/supplier-form')
+@bp.doc(tags=["orders"])
+@bp.auth_required(auth)
+@role_required(["Supplier", "Admin"])
+@bp.input(SupplierFormRequestSchema, location="json")
+@bp.output(OrderResponseSchema)
+def submit_supplier_form(order_id, json_data):
+    success, response = OrderService.submit_supplier_form(order_id, json_data, auth.current_user)
     if success:
         return response, 200
     raise HTTPError(message=response, status_code=400)

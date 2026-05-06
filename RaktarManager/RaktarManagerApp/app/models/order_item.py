@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Optional
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -15,6 +16,7 @@ class OrderItem(db.Model):
     quantity: Mapped[int] = mapped_column()
     unit_price: Mapped[float] = mapped_column()
     subtotal: Mapped[float] = mapped_column()
+    supplied_quantity: Mapped[Optional[int]] = mapped_column(nullable=True)
 
     order: Mapped["Order"] = relationship(back_populates="items")
     product: Mapped["Product"] = relationship(back_populates="order_items")

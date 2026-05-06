@@ -9,6 +9,7 @@ class OrderItemSchema(Schema):
     quantity = fields.Integer()
     unit_price = fields.Float(dump_only=True)
     subtotal = fields.Float(dump_only=True)
+    supplied_quantity = fields.Integer(allow_none=True)
 
 class OrderRequestSchema(Schema):
     address_id = fields.Integer()
@@ -34,8 +35,19 @@ class OrderResponseSchema(Schema):
     is_locked = fields.Integer()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
+    estimated_delivery_at = fields.DateTime(allow_none=True)
+    supplier_notes = fields.String(allow_none=True)
     address = fields.Nested(AdressSchema)
     items = fields.List(fields.Nested(OrderItemSchema))
+
+class SupplierOrderItemSchema(Schema):
+    id = fields.Integer(required=True)
+    supplied_quantity = fields.Integer(required=True)
+
+class SupplierFormRequestSchema(Schema):
+    estimated_delivery_at = fields.DateTime(required=True)
+    supplier_notes = fields.String(allow_none=True)
+    items = fields.List(fields.Nested(SupplierOrderItemSchema), required=True)
 
 class OrderUpdateRequestSchema(Schema):
     address_id = fields.Integer()

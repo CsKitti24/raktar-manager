@@ -31,6 +31,8 @@ class Order(db.Model):
     created_at: Mapped[datetime] = mapped_column(default=func.now())
     locked_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
     updated_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    estimated_delivery_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    supplier_notes: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
 
     orderer: Mapped["User"] = relationship(foreign_keys=[orderer_id], back_populates="orders_as_orderer")
     supplier: Mapped[Optional["User"]] = relationship(foreign_keys=[supplier_id], back_populates="orders_as_supplier")
