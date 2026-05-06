@@ -34,8 +34,12 @@ const LoginPage: React.FC = () => {
       });
       const roles: string[] = meRes.data?.roles ?? [];
 
-      if (roles.includes('Admin') || roles.includes('Warehouseman')) {
+      if (roles.includes('Admin')) {
         navigate('/admin');
+      } else if (roles.includes('Warehouseman')) {
+        navigate('/warehouse');
+      } else if (roles.includes('Carrier')) {
+        navigate('/carrier');
       } else {
         navigate('/');
       }

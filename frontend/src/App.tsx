@@ -16,11 +16,21 @@ import ProfilePage  from './pages/ProfilePage';
 import CheckoutPage from './pages/CheckoutPage';
 
 // Admin pages
-import AdminHomePage         from './pages/admin/AdminHomePage';
-import UserManagementPage    from './pages/admin/UserManagementPage';
-import ProductManagementPage from './pages/admin/ProductManagementPage';
-import OrderManagementPage   from './pages/admin/OrderManagementPage';
+import AdminHomePage          from './pages/admin/AdminHomePage';
+import UserManagementPage     from './pages/admin/UserManagementPage';
+import ProductManagementPage  from './pages/admin/ProductManagementPage';
+import OrderManagementPage    from './pages/admin/OrderManagementPage';
 import CategoryManagementPage from './pages/admin/CategoryManagementPage';
+
+// Warehouse pages
+import WarehouseHomePage    from './pages/warehouse/WarehouseHomePage';
+import WarehouseReceivePage from './pages/warehouse/WarehouseReceivePage';
+import WarehouseDispatchPage from './pages/warehouse/WarehouseDispatchPage';
+import WarehouseOrdersPage  from './pages/warehouse/WarehouseOrdersPage';
+import WarehouseStoragePage from './pages/warehouse/WarehouseStoragePage';
+
+// Carrier pages
+import CarrierOrdersPage from './pages/carrier/CarrierOrdersPage';
 
 import './index.css';
 
@@ -35,7 +45,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const RoleProtectedRoute = ({ roles, children }: { roles: string[]; children: React.ReactNode }) => {
   const { isLoggedIn, user } = useAuth();
   if (!isLoggedIn) return <Navigate to="/login" replace />;
-  // While user is still being fetched, show a brief loader
   if (!user) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: '#64748b', fontFamily: 'Inter, sans-serif' }}>
       <div style={{ textAlign: 'center' }}>
@@ -76,7 +85,7 @@ function App() {
             <Route
               path="/admin"
               element={
-                <RoleProtectedRoute roles={['Admin', 'Warehouseman']}>
+                <RoleProtectedRoute roles={['Admin']}>
                   <DashboardLayout />
                 </RoleProtectedRoute>
               }
@@ -86,6 +95,34 @@ function App() {
               <Route path="products"      element={<ProductManagementPage />} />
               <Route path="orders"        element={<OrderManagementPage />} />
               <Route path="categories"    element={<CategoryManagementPage />} />
+            </Route>
+
+            {/* ── Warehouse routes ── */}
+            <Route
+              path="/warehouse"
+              element={
+                <RoleProtectedRoute roles={['Warehouseman', 'Admin']}>
+                  <DashboardLayout />
+                </RoleProtectedRoute>
+              }
+            >
+              <Route index               element={<WarehouseHomePage />} />
+              <Route path="receive"      element={<WarehouseReceivePage />} />
+              <Route path="dispatch"     element={<WarehouseDispatchPage />} />
+              <Route path="orders"       element={<WarehouseOrdersPage />} />
+              <Route path="storage"      element={<WarehouseStoragePage />} />
+            </Route>
+
+            {/* ── Carrier routes ── */}
+            <Route
+              path="/carrier"
+              element={
+                <RoleProtectedRoute roles={['Carrier']}>
+                  <DashboardLayout />
+                </RoleProtectedRoute>
+              }
+            >
+              <Route index element={<CarrierOrdersPage />} />
             </Route>
 
             {/* ── Catch-all ── */}

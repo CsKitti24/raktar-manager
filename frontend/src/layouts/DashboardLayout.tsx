@@ -14,9 +14,15 @@ const ADMIN_MENU = [
 ];
 
 const WAREHOUSE_MENU = [
-  { path: '/warehouse',         label: 'Készlet',            icon: '🏭', exact: true },
-  { path: '/warehouse/orders',  label: 'Rendelések',          icon: '📋' },
-  { path: '/warehouse/storage', label: 'Tárolóhelyek',        icon: '📍' },
+  { path: '/warehouse',          label: 'Vezérlőpult',      icon: '📊', exact: true },
+  { path: '/warehouse/receive',  label: 'Áru bevételezése', icon: '📥' },
+  { path: '/warehouse/dispatch', label: 'Áru kiadása',      icon: '📤' },
+  { path: '/warehouse/orders',   label: 'Rendelések',        icon: '📋' },
+  { path: '/warehouse/storage',  label: 'Tárolóhelyek',      icon: '📍' },
+];
+
+const CARRIER_MENU = [
+  { path: '/carrier', label: 'Fuvarjaim', icon: '🚚', exact: true },
 ];
 
 const DashboardLayout: React.FC = () => {
@@ -28,7 +34,20 @@ const DashboardLayout: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = user?.roles.includes('Admin');
-  const menuItems = isAdmin ? ADMIN_MENU : WAREHOUSE_MENU;
+  const isWarehouseman = user?.roles.includes('Warehouseman');
+  const isCarrier = user?.roles.includes('Carrier');
+
+  // If on /warehouse path, show warehouse menu; if /carrier show carrier menu; otherwise admin menu
+  const isWarehousePath = window.location.pathname.startsWith('/warehouse');
+  const isCarrierPath = window.location.pathname.startsWith('/carrier');
+
+  let menuItems = ADMIN_MENU;
+  if (isCarrierPath || (!isAdmin && !isWarehouseman && isCarrier)) {
+    menuItems = CARRIER_MENU;
+  } else if (isWarehousePath || (!isAdmin && isWarehouseman)) {
+    menuItems = WAREHOUSE_MENU;
+  }
+
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -48,7 +67,9 @@ const DashboardLayout: React.FC = () => {
 
   const searchPlaceholder = isAdmin
     ? 'Keresés felhasználó, termék alapján...'
-    : 'Keresés cikkszám alapján...';
+    : isWarehouseman
+    ? 'Keresés cikkszám alapján...'
+    : 'Keresés termék alapján...';
 
   return (
     <div className="dashboard-wrapper">
@@ -59,30 +80,34 @@ const DashboardLayout: React.FC = () => {
         </div>
 
         <div className="header-center">
-          <div className="header-search">
-            <input
-              type="text"
-              placeholder={searchPlaceholder}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
-            <button className="header-search-btn" aria-label="Keresés">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-            </button>
-          </div>
+          {!isCarrier && (
+            <div className="header-search">
+              <input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+              <button className="header-search-btn" aria-label="Keresés">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="header-right">
-          {/* Cart icon */}
-          <button className="header-icon-btn" aria-label="Kosár" onClick={() => navigate('/checkout')}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            {totalItems > 0 && <span className="header-badge">{totalItems}</span>}
-          </button>
+          {/* Cart icon – only visible for non-warehouse and non-carrier roles */}
+          {(!isWarehouseman && !isCarrier) && (
+            <button className="header-icon-btn" aria-label="Kosár" onClick={() => navigate('/checkout')}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+              {totalItems > 0 && <span className="header-badge">{totalItems}</span>}
+            </button>
+          )}
 
           {/* Account dropdown */}
           <div className="user-menu" ref={dropdownRef}>
