@@ -73,25 +73,6 @@ const WarehouseStoragePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Summary stats */}
-      <div className="stats-grid" style={{ marginBottom: '1.5rem' }}>
-        <div className="stat-card">
-          <div className="stat-icon blue">📍</div>
-          <div className="stat-value">{activeCount}</div>
-          <div className="stat-label">Aktív tárhely</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon orange">🚫</div>
-          <div className="stat-value">{inactiveCount}</div>
-          <div className="stat-label">Inaktív tárhely</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon green">📦</div>
-          <div className="stat-value">{totalStock}</div>
-          <div className="stat-label">Összes raktáron lévő tétel</div>
-        </div>
-      </div>
-
       <div style={{ display: 'grid', gridTemplateColumns: selectedLocation ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
         {/* Location list */}
         <div className="admin-card">
@@ -120,7 +101,6 @@ const WarehouseStoragePage: React.FC = () => {
                   <tr>
                     <th>Kód</th>
                     <th>Leírás</th>
-                    <th>Állapot</th>
                     <th>Tételek</th>
                     <th></th>
                   </tr>
@@ -132,11 +112,6 @@ const WarehouseStoragePage: React.FC = () => {
                       <tr key={loc.id} style={selectedLocation?.id === loc.id ? { background: '#fdf2f8' } : {}}>
                         <td><strong>{loc.code}</strong></td>
                         <td style={{ color: '#64748b', fontSize: '0.8rem' }}>{loc.description ?? '–'}</td>
-                        <td>
-                          <span className={`badge ${loc.is_active ? 'badge-green' : 'badge-red'}`}>
-                            {loc.is_active ? 'Aktív' : 'Inaktív'}
-                          </span>
-                        </td>
                         <td>
                           <span className={`badge ${count === 0 ? 'badge-gray' : 'badge-blue'}`}>
                             {count} db
@@ -181,9 +156,6 @@ const WarehouseStoragePage: React.FC = () => {
                 </p>
               )}
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-                <span className={`badge ${selectedLocation.is_active ? 'badge-green' : 'badge-red'}`}>
-                  {selectedLocation.is_active ? 'Aktív' : 'Inaktív'}
-                </span>
                 <span className="badge badge-gray">
                   Létrehozva: {new Date(selectedLocation.created_at).toLocaleDateString('hu-HU')}
                 </span>

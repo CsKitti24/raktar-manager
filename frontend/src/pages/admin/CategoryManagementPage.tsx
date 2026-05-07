@@ -5,6 +5,16 @@ import api from '../../services/api';
 interface Category { id: number; name: string; description?: string; }
 
 const CategoryManagementPage: React.FC = () => {
+    const handleDeleteCategory = async (id: number) => {
+      if (!window.confirm('Biztosan törlöd ezt a kategóriát?')) return;
+      try {
+        await api.delete(`/product/categories/${id}`);
+        toast.success('Kategória törölve!');
+        fetchCategories();
+      } catch {
+        toast.error('Nem sikerült törölni a kategóriát.');
+      }
+    };
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading,    setLoading]    = useState(true);
   const [idSearch,   setIdSearch]   = useState('');
@@ -55,7 +65,6 @@ const CategoryManagementPage: React.FC = () => {
         <div className="filter-bar">
           <div className="id-search-row">
             <input className="filter-input" type="number" placeholder="Keresés ID alapján" value={idSearch} onChange={e => setIdSearch(e.target.value)} />
-            <button className="btn-secondary" onClick={() => setIdSearch('')}>✕ Törlés</button>
           </div>
           <button className="btn-secondary" onClick={fetchCategories}>🔄 Frissítés</button>
         </div>
@@ -68,7 +77,7 @@ const CategoryManagementPage: React.FC = () => {
           <div className="admin-table-wrapper">
             <table className="admin-table">
               <thead>
-                <tr><th>ID</th><th>Kategória neve</th><th>Leírás</th></tr>
+                <tr><th>ID</th><th>Kategória neve</th><th>Műveletek</th></tr>
               </thead>
               <tbody>
                 {filtered.map(c => (
@@ -80,7 +89,11 @@ const CategoryManagementPage: React.FC = () => {
                         <strong style={{ color: '#0f172a' }}>{c.name}</strong>
                       </div>
                     </td>
-                    <td style={{ color: '#64748b', fontSize: '0.85rem' }}>{c.description || '—'}</td>
+                    <td>
+                      <button className="btn-danger" onClick={() => handleDeleteCategory(c.id)}>
+                        🗑️ Törlés
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

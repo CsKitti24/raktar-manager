@@ -41,14 +41,14 @@ interface Carrier {
 }
 
 const STATUS_LABELS: Record<string, { label: string; badge: string }> = {
-  pending:    { label: 'Függőben',     badge: 'badge-yellow' },
-  processing: { label: 'Feldolgozás',  badge: 'badge-blue'   },
-  shipped:    { label: 'Szállítás',    badge: 'badge-pink'   },
-  delivered:  { label: 'Teljesítve',   badge: 'badge-green'  },
-  cancelled:  { label: 'Törölve',      badge: 'badge-red'    },
+  'megrendelve':       { label: 'Megrendelve',       badge: 'badge-blue' },
+  'fizetésre vár':     { label: 'Fizetésre vár',     badge: 'badge-yellow' },
+  'feldolgozás alatt': { label: 'Feldolgozás alatt', badge: 'badge-pink' },
+  'beszállításra vár': { label: 'Beszállításra vár', badge: 'badge-yellow' },
+  'lezárt':            { label: 'Lezárt',            badge: 'badge-green' },
 };
 
-const STATUSES = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+const STATUSES = ['megrendelve', 'fizetésre vár', 'feldolgozás alatt', 'beszállításra vár', 'lezárt'];
 
 const WarehouseOrdersPage: React.FC = () => {
   const [orders, setOrders]     = useState<Order[]>([]);

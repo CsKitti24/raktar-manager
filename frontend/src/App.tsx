@@ -21,6 +21,7 @@ import UserManagementPage     from './pages/admin/UserManagementPage';
 import ProductManagementPage  from './pages/admin/ProductManagementPage';
 import OrderManagementPage    from './pages/admin/OrderManagementPage';
 import CategoryManagementPage from './pages/admin/CategoryManagementPage';
+import ComplaintManagementPage from './pages/admin/ComplaintManagementPage';
 
 // Warehouse pages
 import WarehouseHomePage    from './pages/warehouse/WarehouseHomePage';
@@ -98,6 +99,7 @@ function App() {
               <Route path="products"      element={<ProductManagementPage />} />
               <Route path="orders"        element={<OrderManagementPage />} />
               <Route path="categories"    element={<CategoryManagementPage />} />
+              <Route path="complaints"    element={<ComplaintManagementPage />} />
             </Route>
 
             {/* ── Warehouse routes ── */}

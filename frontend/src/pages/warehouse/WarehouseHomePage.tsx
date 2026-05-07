@@ -25,7 +25,6 @@ const WarehouseHomePage: React.FC = () => {
         { label: 'Összes rendelés',      value: summary.total_orders,             icon: '📋', color: 'pink'   },
         { label: 'Alacsony készlet',      value: summary.low_stock_items,          icon: '📦', color: 'orange' },
         { label: 'Aktív tárolóhelyek',    value: summary.active_storage_locations, icon: '📍', color: 'blue'   },
-        { label: 'Aktív reklamációk',     value: summary.active_complaints,        icon: '⚠️', color: 'green'  },
       ]
     : [];
 

@@ -18,6 +18,7 @@ const STATUSES = [
   { value: 'megrendelve',       label: 'Megrendelve' },
   { value: 'fizetésre vár',     label: 'Fizetésre vár' },
   { value: 'feldolgozás alatt', label: 'Feldolgozás alatt' },
+  { value: 'beszállításra vár', label: 'Beszállításra vár' },
   { value: 'lezárt',            label: 'Lezárt' },
 ];
 
@@ -25,6 +26,7 @@ const STATUS_BADGE: Record<string, string> = {
   'megrendelve':       'badge-blue',
   'fizetésre vár':     'badge-yellow',
   'feldolgozás alatt': 'badge-pink',
+  'beszállításra vár': 'badge-yellow',
   'lezárt':            'badge-green',
 };
 
@@ -113,7 +115,7 @@ const OrderManagementPage: React.FC = () => {
               <thead>
                 <tr>
                   <th>ID</th><th>Rendelésszám</th><th>Megrendelő ID</th><th>Összeg</th>
-                  <th>Státusz</th><th>Zárolva</th><th>Létrehozva</th><th>Módosítva</th><th>Műveletek</th>
+                  <th>Státusz</th><th>Létrehozva</th><th>Módosítva</th><th>Műveletek</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,7 +130,6 @@ const OrderManagementPage: React.FC = () => {
                         {o.status}
                       </span>
                     </td>
-                    <td><span className={`badge ${o.is_locked ? 'badge-red' : 'badge-green'}`}>{o.is_locked ? '🔒 Igen' : '🔓 Nem'}</span></td>
                     <td style={{ fontSize: '0.8rem', color: '#64748b' }}>{formatDate(o.created_at)}</td>
                     <td style={{ fontSize: '0.8rem', color: '#64748b' }}>{formatDate(o.updated_at)}</td>
                     <td>

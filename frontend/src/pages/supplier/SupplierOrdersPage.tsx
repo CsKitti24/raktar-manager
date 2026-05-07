@@ -40,6 +40,7 @@ interface Order {
 const STATUS_LABELS: Record<string, { label: string; badge: string }> = {
   'megrendelve': { label: 'Megrendelve', badge: 'badge-blue' },
   'kifizetve': { label: 'Kifizetve', badge: 'badge-green' },
+  'beszállításra vár': { label: 'Beszállításra vár', badge: 'badge-yellow' },
   'szállítás alatt': { label: 'Szállítás alatt', badge: 'badge-yellow' },
   'teljesítve': { label: 'Teljesítve', badge: 'badge-green' },
   'törölve': { label: 'Törölve', badge: 'badge-red' },
@@ -48,7 +49,6 @@ const STATUS_LABELS: Record<string, { label: string; badge: string }> = {
 const SupplierOrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState('');
 
   // Status/Form update modal
   const [formModal, setFormModal] = useState<Order | null>(null);
@@ -72,10 +72,7 @@ const SupplierOrdersPage: React.FC = () => {
 
   useEffect(() => { fetchOrders(); }, []);
 
-  const filtered = orders.filter(o => {
-    const matchStatus = statusFilter === '' || o.status === statusFilter;
-    return matchStatus;
-  });
+  const filtered = orders.filter(o => o.status === 'beszállításra vár');
 
   const openForm = (order: Order) => {
     setFormModal(order);
@@ -149,20 +146,6 @@ const SupplierOrdersPage: React.FC = () => {
       </div>
 
       <div className="admin-card">
-        {/* Filter bar */}
-        <div className="filter-bar">
-          <select
-            className="filter-select"
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-          >
-            <option value="">Minden állapot</option>
-            {Object.keys(STATUS_LABELS).map(s => (
-              <option key={s} value={s}>{statusInfo(s).label}</option>
-            ))}
-          </select>
-        </div>
-
         {loading ? (
           <div className="loading-spinner"><div className="spinner-ring" /> Betöltés...</div>
         ) : filtered.length === 0 ? (
