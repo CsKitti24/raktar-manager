@@ -9,7 +9,7 @@ from apiflask import HTTPError
 @bp.get('/list')
 @bp.doc(tags=["storage"])
 @bp.auth_required(auth)
-@role_required(["Warehouse", "Admin"]) 
+@role_required(["Warehouseman", "Admin"]) 
 @bp.output(StorageLocationResponseSchema(many=True))
 def get_locations():
     success, response = StorageService.get_all_locations()
@@ -21,7 +21,7 @@ def get_locations():
 @bp.get('/<int:location_id>')
 @bp.doc(tags=["storage"])
 @bp.auth_required(auth)
-@role_required(["Warehouse", "Admin"])
+@role_required(["Warehouseman", "Admin"])
 @bp.output(StorageLocationResponseSchema)
 def get_location(location_id):
     success, response = StorageService.get_location_by_id(location_id)

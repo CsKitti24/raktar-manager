@@ -1,4 +1,4 @@
-﻿from app.extensions import auth
+from app.extensions import auth
 from app.blueprints import role_required
 from app.blueprints.inventory import bp
 from app.blueprints.inventory.schemas import (InventoryResponseSchema, InventoryLogResponseSchema, InventoryRequestSchema)
@@ -9,7 +9,7 @@ from apiflask import HTTPError
 @bp.get('/list')
 @bp.doc(tags=["inventory"])
 @bp.auth_required(auth)
-@role_required(["Warehouse", "Admin"])
+@role_required(["Warehouseman", "Admin"])
 @bp.output(InventoryResponseSchema(many=True))
 def get_inventory():
     success, response = InventoryService.get_all_inventory()
@@ -21,7 +21,7 @@ def get_inventory():
 @bp.get('/log')
 @bp.doc(tags=["inventory"])
 @bp.auth_required(auth)
-@role_required(["Warehouse", "Admin"])
+@role_required(["Warehouseman", "Admin"])
 @bp.output(InventoryLogResponseSchema(many=True))
 def get_inventory_log():
     success, response = InventoryService.get_inventory_logs()
@@ -33,7 +33,7 @@ def get_inventory_log():
 @bp.post('/receive')
 @bp.doc(tags=["inventory"])
 @bp.auth_required(auth)
-@role_required(["Warehouse", "Admin"]) 
+@role_required(["Warehouseman", "Admin"]) 
 @bp.input(InventoryRequestSchema, location="json")
 @bp.output(InventoryResponseSchema)
 def receive_inventory(json_data):
@@ -46,7 +46,7 @@ def receive_inventory(json_data):
 @bp.post('/dispatch')
 @bp.doc(tags=["inventory"])
 @bp.auth_required(auth)
-@role_required(["Warehouse", "Admin"]) 
+@role_required(["Warehouseman", "Admin"]) 
 @bp.input(InventoryRequestSchema, location="json")
 @bp.output(InventoryResponseSchema)
 def dispatch_inventory(json_data):

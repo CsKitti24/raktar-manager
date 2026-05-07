@@ -7,16 +7,19 @@ import traceback
 
 class ComplaintService:
 
-    #Reklamációk listázása
     @staticmethod
     def get_all_complaints(current_user):
         try:
+            if not current_user:
+                return False, "User not authenticated."
+                
             user_id = current_user.get("user_id")
             roles_data = current_user.get("roles", [])
             user_roles = [r.get("rolename") if isinstance(r, dict) else r for r in roles_data]
 
             stmt = select(Complaint)
 
+            # Admin lát mindent, az Orderer csak a sajátját
             if 'Admin' not in user_roles:
                 if 'Orderer' in user_roles:
                     stmt = stmt.where(Complaint.user_id == user_id)
@@ -27,7 +30,7 @@ class ComplaintService:
             return True, complaints
         except Exception as ex:
             traceback.print_exc()
-            return False, "Incorrect query data!"
+            return False, f"Hiba történt a reklamációk lekérdezésekor: {str(ex)}"
 
     #Reklamáció részletei
     @staticmethod
@@ -68,7 +71,7 @@ class ComplaintService:
                 user_id=user_id,
                 description=request['description'],
                 file_name=request.get('file_name'),
-                status='nyitott',
+                status='Pending',
                 created_at=now
             )
             
@@ -79,7 +82,7 @@ class ComplaintService:
         except Exception as ex:
             db.session.rollback()
             traceback.print_exc()
-            return False, "Incorrect Complaint data!"
+            return False, f"Hiba a reklamáció létrehozásakor: {str(ex)}"
 
     #Reklamáció kezelése
     @staticmethod
@@ -94,7 +97,7 @@ class ComplaintService:
             if 'resolution' in request:
                 complaint.resolution = request['resolution']
                 
-            if complaint.status.lower() in ['lezart', 'approved', 'rejected']:
+            if complaint.status.lower() in ['lezart', 'approved', 'rejected', 'resolved']:
                 complaint.resolved_at = datetime.now()
             
             db.session.commit()
@@ -102,10 +105,4 @@ class ComplaintService:
         except Exception as ex:
             db.session.rollback()
             traceback.print_exc()
-            return False, "Incorrect query data!"
-            return True, complaint
-            
-        except Exception as ex:
-            db.session.rollback()
-            traceback.print_exc()
-            return False, "Incorrect Update data!"
+            return False, f"Hiba a reklamáció frissítésekor: {str(ex)}"

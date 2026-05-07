@@ -23,7 +23,7 @@ class OrderService:
   
             stmt = select(Order)
 
-            if 'Admin' not in user_roles and 'Warehouse' not in user_roles:
+            if 'Admin' not in user_roles and 'Warehouseman' not in user_roles:
                 filters = []
                 if 'Orderer' in user_roles:
                     filters.append(Order.orderer_id == user_id)

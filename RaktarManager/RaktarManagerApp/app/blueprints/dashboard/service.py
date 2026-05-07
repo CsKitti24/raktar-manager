@@ -11,12 +11,12 @@ class DashboardService:
     @staticmethod
     def get_summary(current_user):
         try:
+            if not current_user:
+                return False, "User not authenticated."
+
             user_id = current_user.get("user_id")
             roles_data = current_user.get("roles", [])
-     
-            user_roles = []
-            for role in current_user.get("roles"):
-                user_roles.append(role)
+            user_roles = [r.get("rolename") if isinstance(r, dict) else r for r in roles_data]
 
             orders_query = select(func.count(Order.id))
             
@@ -33,8 +33,10 @@ class DashboardService:
 
             total_orders = db.session.scalar(orders_query) or 0
 
-          
-            complaints_query = select(func.count(Complaint.id)).filter_by(status='nyitott')
+            # Itt is Pending-re állítjuk nyitott helyett
+            complaints_query = select(func.count(Complaint.id)).filter(
+                or_(Complaint.status == 'Pending', Complaint.status == 'nyitott')
+            )
             
             if 'Admin' not in user_roles:
                 if 'Orderer' in user_roles:
