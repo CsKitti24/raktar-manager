@@ -13,13 +13,13 @@ class ComplaintService:
         try:
             user_id = current_user.get("user_id")
             roles_data = current_user.get("roles", [])
-            user_roles = [r.get("rolename") for r in roles_data if isinstance(r, dict)]
+            user_roles = [r.get("rolename") if isinstance(r, dict) else r for r in roles_data]
 
             stmt = select(Complaint)
 
             if 'Admin' not in user_roles:
                 if 'Orderer' in user_roles:
-                    stmt = stmt.filter_by(user_id=user_id)
+                    stmt = stmt.where(Complaint.user_id == user_id)
                 else:
                     return False, "Access denied."
 
@@ -35,7 +35,7 @@ class ComplaintService:
         try:
             user_id = current_user.get("user_id")
             roles_data = current_user.get("roles", [])
-            user_roles = [r.get("rolename") for r in roles_data if isinstance(r, dict)]
+            user_roles = [r.get("rolename") if isinstance(r, dict) else r for r in roles_data]
 
             complaint = db.session.execute(select(Complaint).filter_by(id=complaint_id)).scalar_one_or_none()
             if not complaint:
@@ -94,10 +94,15 @@ class ComplaintService:
             if 'resolution' in request:
                 complaint.resolution = request['resolution']
                 
-            if complaint.status.lower() == 'lezart':
+            if complaint.status.lower() in ['lezart', 'approved', 'rejected']:
                 complaint.resolved_at = datetime.now()
             
             db.session.commit()
+            return True, complaint
+        except Exception as ex:
+            db.session.rollback()
+            traceback.print_exc()
+            return False, "Incorrect query data!"
             return True, complaint
             
         except Exception as ex:

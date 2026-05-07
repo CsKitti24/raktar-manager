@@ -7,7 +7,7 @@ from app.models.user import User
 from datetime import datetime, timedelta
 from app.models.product import Product
 from app.models.order_item import OrderItem
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, and_
 import traceback
 
 class OrderService:
@@ -28,7 +28,7 @@ class OrderService:
                 if 'Orderer' in user_roles:
                     filters.append(Order.orderer_id == user_id)
                 if 'Supplier' in user_roles:
-                    filters.append(Order.supplier_id == user_id)
+                    filters.append(and_(Order.supplier_id == user_id, Order.status == 'beszállításra vár'))
                 if 'Carrier' in user_roles:
                     filters.append(Order.carrier_id == user_id)
 
@@ -201,7 +201,7 @@ class OrderService:
 
             order.estimated_delivery_at = request.get('estimated_delivery_at')
             order.supplier_notes = request.get('supplier_notes')
-            order.status = 'szállítás alatt'
+            order.status = 'feldolgozás alatt'
             order.updated_at = datetime.now()
 
             # Frissítjük a tételeket
@@ -229,6 +229,7 @@ class OrderService:
 
             if role_type == 'Supplier':
                 order.supplier_id = target_id
+                order.status = 'beszállításra vár'
             elif role_type == 'Carrier':
                 order.carrier_id = target_id
             

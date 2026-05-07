@@ -47,3 +47,12 @@ class ProductService:
             db.session.commit()
             return True
         return False
+
+    @staticmethod
+    def delete_category(cat_id):
+        cat = Category.query.get(cat_id)
+        if cat:
+            db.session.delete(cat)
+            db.session.commit()
+            return True
+        return False

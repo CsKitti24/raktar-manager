@@ -50,36 +50,74 @@ def seed_database():
                 ])
                 db.session.commit()
 
-            # Test User
-            if not User.query.filter_by(email="peldapeter@gmail.com").first():
-                user = User(username="Peter", 
-                            email="peldapeter@gmail.com",
-                            full_name="Példa Péter",
-                            phone="+36301234567")
-                user.set_password("Jelszo123")
-                db.session.add(user)
-                db.session.commit()
+            # Test Users
+            test_users = [
+                {
+                    "username": "Peter",
+                    "email": "peldapeter@gmail.com",
+                    "full_name": "Példa Péter",
+                    "phone": "+36301234567",
+                    "password": "Jelszo123",
+                    "roles": ["Admin", "Orderer"]
+                },
+                {
+                    "username": "Fuvarozo",
+                    "email": "fuvarozo@teszt.hu",
+                    "full_name": "Teszt Fuvarozó",
+                    "phone": "+36301111111",
+                    "password": "Jelszo123",
+                    "roles": ["Carrier"]
+                },
+                {
+                    "username": "Beszallito",
+                    "email": "beszallito@teszt.hu",
+                    "full_name": "Teszt Beszállító",
+                    "phone": "+36302222222",
+                    "password": "Jelszo123",
+                    "roles": ["Supplier"]
+                },
+                {
+                    "username": "Raktaros",
+                    "email": "raktaros@teszt.hu",
+                    "full_name": "Teszt Raktáros",
+                    "phone": "+36303333333",
+                    "password": "Jelszo123",
+                    "roles": ["Warehouseman"]
+                },
+                {
+                    "username": "Megrendelo",
+                    "email": "megrendelo@teszt.hu",
+                    "full_name": "Teszt Megrendelő",
+                    "phone": "+36304444444",
+                    "password": "Jelszo123",
+                    "roles": ["Orderer"]
+                }
+            ]
 
-            # Assign Roles 
-            user = User.query.filter_by(email="peldapeter@gmail.com").first()
-            admin_role = Role.query.filter_by(rolename="Admin").first()
-            user_role = Role.query.filter_by(rolename="Orderer").first()
+            for u_data in test_users:
+                if not User.query.filter_by(email=u_data["email"]).first():
+                    user = User(
+                        username=u_data["username"],
+                        email=u_data["email"],
+                        full_name=u_data["full_name"],
+                        phone=u_data["phone"]
+                    )
+                    user.set_password(u_data["password"])
+                    
+                    for role_name in u_data["roles"]:
+                        role = Role.query.filter_by(rolename=role_name).first()
+                        if role:
+                            user.roles.append(role)
+                    
+                    db.session.add(user)
             
-            roles_added = False
-            if admin_role and admin_role not in user.roles:
-                user.roles.append(admin_role)
-                roles_added = True
-            if user_role and user_role not in user.roles:
-                user.roles.append(user_role)
-                roles_added = True
-                
-            if roles_added:
-                db.session.commit()
+            db.session.commit()
 
             # Address
-            if user and not Address.query.filter_by(user_id=user.id).first():
+            main_user = User.query.filter_by(email="peldapeter@gmail.com").first()
+            if main_user and not Address.query.filter_by(user_id=main_user.id).first():
                 db.session.add_all([
-                    Address(user_id=user.id, 
+                    Address(user_id=main_user.id, 
                             country="Magyarország", 
                             city="Budapest", 
                             street="Kossuth Lajos tér 1-3.", 

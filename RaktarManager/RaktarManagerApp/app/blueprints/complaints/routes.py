@@ -1,6 +1,6 @@
 import os
 import uuid
-from flask import jsonify, request, current_app
+from flask import jsonify, request, current_app, send_from_directory
 from werkzeug.utils import secure_filename
 from app.blueprints.complaints import bp
 from app.blueprints.complaints.service import ComplaintService
@@ -76,6 +76,16 @@ def upload_image():
         
         # Return the relative path or filename
         return {"file_name": unique_filename}, 200
+
+# Reklamáció kép letöltése
+@bp.get('/image/<string:filename>')
+@bp.doc(tags=["complaints"])
+@bp.auth_required(auth)
+def get_complaint_image(filename):
+    upload_folder = os.path.join(current_app.root_path, 'uploads', 'complaints')
+    if not os.path.exists(os.path.join(upload_folder, filename)):
+        raise HTTPError(message="A kért kép nem található", status_code=404)
+    return send_from_directory(upload_folder, filename)
 
 #Reklamáció kezelése    ✔
 @bp.put('/<int:complaint_id>/update')

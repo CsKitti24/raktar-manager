@@ -24,6 +24,15 @@ def get_categories():
 def add_category(json_data):
     return ProductService.create_category(json_data)
 
+# Kategória törlése
+@bp.delete('/categories/<int:id>')
+@bp.auth_required(auth)
+@role_required(['Admin'])
+def delete_category(id):
+    if ProductService.delete_category(id):
+        return {"message": "Kategória törölve"}
+    raise HTTPError(404)
+
 #termekek
 @bp.get('/products')
 @bp.auth_required(auth)

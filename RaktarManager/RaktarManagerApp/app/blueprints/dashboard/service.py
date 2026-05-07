@@ -3,7 +3,7 @@ from app.models.order import Order
 from app.models.complaint import Complaint
 from app.models.inventory import Inventory
 from app.models.storage import StorageLocation
-from sqlalchemy import select, func, or_
+from sqlalchemy import select, func, or_, and_
 import traceback
 
 class DashboardService:
@@ -23,7 +23,7 @@ class DashboardService:
             if 'Admin' not in user_roles and 'Warehouseman' not in user_roles:
                 filters = []
                 if 'Orderer' in user_roles: filters.append(Order.orderer_id == user_id)
-                if 'Supplier' in user_roles: filters.append(Order.supplier_id == user_id)
+                if 'Supplier' in user_roles: filters.append(and_(Order.supplier_id == user_id, Order.status == 'beszállításra vár'))
                 if 'Carrier' in user_roles: filters.append(Order.carrier_id == user_id)
                 
                 if filters:
